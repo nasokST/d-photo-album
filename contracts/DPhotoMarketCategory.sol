@@ -1,8 +1,19 @@
 pragma solidity ^0.4.24;
 
-import "./ipfs/IPFSStorage.sol";
+import "./IPFSStorage.sol";
 
 contract DPhotoMarketCategory {
+
+    event NewPhoto(
+        uint indexed _photo_index,
+        uint _category_id
+    );
+
+    event NewComment(
+        uint indexed _photo_index,
+        address _from,
+        uint _category_id
+    );    
 
     using IPFSStorage for IPFSStorage.Multihash;
 
@@ -12,17 +23,19 @@ contract DPhotoMarketCategory {
         uint8[] sizes;
     }
 
-    address private owner;
-    address private market;
-    uint8 private version;
+    uint public category_id;
+    address public owner;
+    address public market;
+    uint public version;
 
     PhotoStorage photo_storage;
     mapping(uint => IPFSStorage.Multihash) photo_comments; // mapping(photo_index => comment_hash)
     //mapping(address => uint[]) photographer_photos; // 
 
-    constructor(address _market) public {
+    constructor(uint _category_id, address _market) public {
         owner = msg.sender;
         market = _market;
+        category_id = _category_id;
         version = 1;
     }
 
@@ -37,27 +50,28 @@ contract DPhotoMarketCategory {
         photo_storage.hash_functions.push(_hash_function);
         photo_storage.sizes.push(_size);
         
-        require(photo_storage.digests.length == photo_storage.hash_functions.length);
-        require(photo_storage.sizes.length == photo_storage.hash_functions.length);
+        require(photo_storage.digests.length == photo_storage.hash_functions.length); // this can affect to coverage test "Branch" part
+        require(photo_storage.sizes.length == photo_storage.hash_functions.length); // this can affect to coverage test "Branch" part
+        
+        emit NewPhoto(photo_storage.digests.length - 1, category_id); 
 
         return photo_storage.digests.length - 1;
     }
 
-    function addComment(uint _to_photo_idx, bytes32 _digest, uint8 _hash_function, uint8 _size) 
+    function addComment(address _from, uint _to_photo_idx, bytes32 _digest, uint8 _hash_function, uint8 _size) 
     external onlyOwner{
+        require(_to_photo_idx < photo_storage.digests.length);
         photo_comments[_to_photo_idx] = IPFSStorage.Multihash(_digest, _hash_function, _size);
+        
+        emit NewComment(_to_photo_idx, _from, category_id); 
     }
 
-    function getVersion() external view onlyOwner returns(uint) {
-        return version;
-    }
-    
-    function getComment(uint _for_photo_idx) 
+    function getComments(uint _for_photo_idx) 
     external view onlyOwner returns(bytes32, uint8, uint8) {
         return (photo_comments[_for_photo_idx].digest, 
                 photo_comments[_for_photo_idx].hashFunction, 
                 photo_comments[_for_photo_idx].size);
-    }    
+    }
 
     function getAllPhotos() 
     external view onlyOwner returns(bytes32[], uint8[], uint8[]) { // returns(photo_hash[], photo_index[])
