@@ -1,4 +1,4 @@
-package com.shumencoin.controllers;
+package com.dphotoalbum.controllers;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -14,25 +14,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dphotoalbum.services.PhotoAlbumService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shumencoin.node.NodeApplication;
+//import com.shumencoin.node.NodeApplication;
 
 @RestController
-public class NodeRestController {
+public class DPhotoAlbumRestController {
 
-//    @Autowired
-//    Node node;
-//
+	@Autowired
+	public PhotoAlbumService photoAlbumService;
+
 //    @RequestMapping("/node")
 //    public Node index() {
 //	return node;
 //    }
-//
-//    @GetMapping("/node/id")
-//    public ResponseEntity<?> getNodeId() {
-//	return new ResponseEntity<Object>(node.getNode().getNodeId(), HttpStatus.OK);
-//    }
-//
+
+	@GetMapping("/categories/all")
+	public ResponseEntity<?> getNodeId() {
+		return new ResponseEntity<Object>(photoAlbumService.getAllcategories(), HttpStatus.OK);
+	}
+
 //    @GetMapping("/node/chain-id")
 //    public ResponseEntity<?> getChainId() {
 //	return new ResponseEntity<Object>(node.getBlockchain().getChainId(), HttpStatus.OK);
