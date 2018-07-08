@@ -14,6 +14,9 @@ import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 
 import com.dphotoalbum.contracts.DPhotoAlbum_sol_DPhotoAlbum;
+import com.dphotoalbum.objects.DPhoto;
+import com.dphotoalbum.objects.DPhotoCommentIPFS;
+import com.dphotoalbum.objects.DPhotoInput;
 import com.dphotoalbum.objects.PhotoCategory;
 
 public class DPhotoAlbumContractService {
@@ -23,7 +26,7 @@ public class DPhotoAlbumContractService {
 		credentials = Credentials.create(privateKey);
 	}
 
-	public boolean deploy(){
+	public boolean deploy() {
 		try {
 			contract = DPhotoAlbum_sol_DPhotoAlbum
 					.deploy(web3, credentials, ManagedTransaction.GAS_PRICE, BigInteger.valueOf(4600000)).send();
@@ -31,14 +34,14 @@ public class DPhotoAlbumContractService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return (null != contract);
 	}
 
 	public boolean load(String address) {
 		contract = DPhotoAlbum_sol_DPhotoAlbum.load(address, web3, credentials, ManagedTransaction.GAS_PRICE,
 				Contract.GAS_LIMIT);
-		
+
 		return (null != contract);
 	}
 
@@ -47,29 +50,59 @@ public class DPhotoAlbumContractService {
 	}
 
 	public boolean addPhotoCategory(String photoCategoryAddress) {
-		
+
 		try {
 			TransactionReceipt txInfo = contract.addCategory(photoCategoryAddress).send();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
-	}	
+	}
+
+	public boolean addPhoto(DPhoto dphoto) {
+		try {
+			TransactionReceipt txInfo = contract
+					.addPhoto(new BigInteger(String.valueOf(dphoto.getCategory().getValue())),
+							dphoto.getIpfsHash().digest, dphoto.getIpfsHash().hashFunction, dphoto.getIpfsHash().size)
+					.send();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean addPhotoComment(DPhotoCommentIPFS ipfsPhotoComment) {
+		try {
+			BigInteger categoriId = new BigInteger(String.valueOf(ipfsPhotoComment.getCategory().getValue()));
+
+			TransactionReceipt txInfo = contract.addPhotoComments(categoriId, ipfsPhotoComment.getPhotoIndex(),
+					ipfsPhotoComment.getIpfsHash().digest, ipfsPhotoComment.getIpfsHash().hashFunction,
+					ipfsPhotoComment.getIpfsHash().size).send();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
 
 	public List<PhotoCategory> getAvailableCategories() {
-		
+
 		List<PhotoCategory> availableCategories = new ArrayList<>();
 		try {
 			List<BigInteger> categories = (List<BigInteger>) contract.getCategories().send();
 
 			int categories_size = categories.size();
-			for(int idx = 0; idx < categories_size; ++idx) {
-				//BigInteger a = categories.get(idx);
+			for (int idx = 0; idx < categories_size; ++idx) {
+				// BigInteger a = categories.get(idx);
 				PhotoCategory category = new PhotoCategory(categories.get(idx));
 				availableCategories.add(category);
-			}			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Collections.emptyList();
@@ -81,5 +114,4 @@ public class DPhotoAlbumContractService {
 	private Web3j web3;
 	private Credentials credentials;
 	private DPhotoAlbum_sol_DPhotoAlbum contract;
-
 }

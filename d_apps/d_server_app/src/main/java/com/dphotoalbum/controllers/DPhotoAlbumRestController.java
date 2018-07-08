@@ -1,10 +1,12 @@
 package com.dphotoalbum.controllers;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.dphotoalbum.config.PhotoCategoryType;
+import com.dphotoalbum.objects.DPhoto;
+import com.dphotoalbum.objects.DPhotoCommentsInput;
+import com.dphotoalbum.objects.DPhotoInput;
 import com.dphotoalbum.services.PhotoAlbumService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.shumencoin.node.NodeApplication;
@@ -33,6 +41,57 @@ public class DPhotoAlbumRestController {
 	public ResponseEntity<?> getNodeId() {
 		return new ResponseEntity<Object>(photoAlbumService.getAllcategories(), HttpStatus.OK);
 	}
+	
+	@PostMapping(value = "/dphoto", headers = ("content-type=multipart/*"), produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> uploadMultipleFile(@RequestParam("file") List<MultipartFile> inputFiles,
+			@RequestParam("category") List<PhotoCategoryType> categories, 
+			@RequestParam("pk") List<String> keys) {
+
+		List<DPhotoInput> dphotos = new ArrayList<DPhotoInput>();
+
+		try {
+			boolean listSizeEqual = (inputFiles.size() == categories.size() && inputFiles.size() == keys.size());
+
+			if (!listSizeEqual) {
+				new ResponseEntity<Object>("Missing parameters", HttpStatus.BAD_REQUEST);
+			}
+
+			int inputFilesListSize = inputFiles.size();
+			for (int idx = 0; idx < inputFilesListSize; ++idx) {
+
+				DPhotoInput dphoto = new DPhotoInput();
+
+				dphoto.setCategory(categories.get(idx));
+				dphoto.setPk(keys.get(idx));
+				dphoto.setFileSize(inputFiles.get(idx).getSize());
+				dphoto.setFile(inputFiles.get(idx).getBytes());
+
+				dphotos.add(dphoto);
+			}
+			
+			if (!photoAlbumService.addPhotos(dphotos)) {
+				new ResponseEntity<Object>("ERROR uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			new ResponseEntity<Object>("ERROR uploading file", HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<Object>("OK", HttpStatus.OK);
+	}
+	
+	@PostMapping("/dphoto/comment")
+	public ResponseEntity<?> setPhotoComment(@RequestBody DPhotoCommentsInput photoComments) {
+		if(!photoAlbumService.addComments(photoComments)) {
+			new ResponseEntity<Object>("ERROR uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<Object>("OK", HttpStatus.OK);
+	}
+	
+	
+	
 
 //    @GetMapping("/node/chain-id")
 //    public ResponseEntity<?> getChainId() {
