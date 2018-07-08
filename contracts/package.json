@@ -17,13 +17,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nasokST/d-photo-market.git"
+    "url": "git+https://github.com/nasokST/d-photo-album.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nasokST/d-photo-market/issues"
+    "url": "https://github.com/nasokST/d-photo-album/issues"
   },
-  "homepage": "https://github.com/nasokST/d-photo-market#readme"
+  "homepage": "https://github.com/nasokST/d-photo-album#readme"
 }
