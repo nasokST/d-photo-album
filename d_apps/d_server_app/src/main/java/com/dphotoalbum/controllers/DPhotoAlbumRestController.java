@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dphotoalbum.config.PhotoCategoryType;
 import com.dphotoalbum.objects.DPhoto;
+import com.dphotoalbum.objects.DPhotoCommentsFile;
 import com.dphotoalbum.objects.DPhotoCommentsInput;
 import com.dphotoalbum.objects.DPhotoInput;
 import com.dphotoalbum.services.PhotoAlbumService;
@@ -81,6 +82,8 @@ public class DPhotoAlbumRestController {
 		return new ResponseEntity<Object>("OK", HttpStatus.OK);
 	}
 	
+	
+	// --- COMENTS ---
 	@PostMapping("/dphoto/comment")
 	public ResponseEntity<?> setPhotoComment(@RequestBody DPhotoCommentsInput photoComments) {
 		if(!photoAlbumService.addComments(photoComments)) {
@@ -89,7 +92,17 @@ public class DPhotoAlbumRestController {
 
 		return new ResponseEntity<Object>("OK", HttpStatus.OK);
 	}
-	
+	@GetMapping("/dphoto/comment/{cateforyId/{photoIndex}}")
+	public ResponseEntity<?> getPhotoComments(@PathVariable long cateforyId, @PathVariable long photoIndex) {
+		
+		DPhotoCommentsFile comments = photoAlbumService.getComments(cateforyId, photoIndex);
+
+		if (null == comments) {
+			new ResponseEntity<Object>("ERROR uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<Object>("OK", HttpStatus.OK);
+	}	
 	
 	
 

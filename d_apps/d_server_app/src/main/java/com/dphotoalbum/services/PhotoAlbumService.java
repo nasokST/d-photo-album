@@ -10,13 +10,15 @@ import com.dphotoalbum.config.DPhotoAlbumConfig;
 import com.dphotoalbum.config.PhotoCategoryType;
 import com.dphotoalbum.contracts.services.DPhotoCategoryContractService;
 import com.dphotoalbum.contracts.services.DPhotoAlbumContractService;
+import com.dphotoalbum.objects.DPhoto;
 import com.dphotoalbum.objects.DPhotoCommentIPFS;
+import com.dphotoalbum.objects.DPhotoCommentsFile;
 import com.dphotoalbum.objects.DPhotoCommentsInput;
 import com.dphotoalbum.objects.DPhotoInput;
 import com.dphotoalbum.objects.IPFSMultihash;
 import com.dphotoalbum.objects.PhotoCategory;
 
-@Service("pfotoAlbumService")
+@Service("photoAlbumService")
 public class PhotoAlbumService {
 
 	private static DPhotoAlbumContractService albumContractService;
@@ -73,7 +75,30 @@ public class PhotoAlbumService {
 		}
 
 		return false;
-	}	
+	}
+
+	public DPhotoCommentsFile getComments(long categoryId, long photoIndex) {
+
+		IPFSMultihash commentHash = albumContractService.getComments(categoryId, photoIndex);
+
+		if (null != commentHash) {
+			DPhotoCommentsFile comments = null;
+
+			// TODO getting comments from IPFS
+
+			return comments;
+		}
+
+		return null;
+	}
+
+	public List<DPhoto> getAllPhotosByCategory(long categoryId) {
+		return albumContractService.getAllPhotosByCategory(categoryId);
+	}
+
+	public List<DPhoto> getAllPhotosByPhotographerByCategory(String photographer, long categoryId) {
+		return albumContractService.getAllPhotosByCategoryAndPhotographer(photographer, categoryId);
+	}
 
 	public static boolean initAlbum() {
 		albumContractService = initAlbum(DPhotoAlbumConfig.getPrivateKey());

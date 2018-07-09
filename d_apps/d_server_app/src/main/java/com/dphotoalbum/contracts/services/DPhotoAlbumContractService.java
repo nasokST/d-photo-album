@@ -2,21 +2,24 @@ package com.dphotoalbum.contracts.services;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.web3j.abi.datatypes.Uint;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple3;
+import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 
+import com.dphotoalbum.config.PhotoCategoryType;
 import com.dphotoalbum.contracts.DPhotoAlbum_sol_DPhotoAlbum;
 import com.dphotoalbum.objects.DPhoto;
 import com.dphotoalbum.objects.DPhotoCommentIPFS;
-import com.dphotoalbum.objects.DPhotoInput;
+import com.dphotoalbum.objects.IPFSMultihash;
 import com.dphotoalbum.objects.PhotoCategory;
 
 public class DPhotoAlbumContractService {
@@ -91,6 +94,24 @@ public class DPhotoAlbumContractService {
 		return true;
 	}
 
+	public IPFSMultihash getComments(long cateforyId, long photoIndex) {
+		IPFSMultihash ipfsMultihash = null;
+		try {
+			Tuple3<byte[], BigInteger, BigInteger> commentHash = contract.getPhotoComments(new BigInteger(String.valueOf(cateforyId)),
+					new BigInteger(String.valueOf(photoIndex))).send();
+
+			ipfsMultihash = new IPFSMultihash();
+			ipfsMultihash.digest = Arrays.copyOf(commentHash.getValue1(), commentHash.getValue1().length);
+			ipfsMultihash.hashFunction = commentHash.getValue2();
+			ipfsMultihash.size = commentHash.getValue3();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ipfsMultihash;
+	}
+
 	public List<PhotoCategory> getAvailableCategories() {
 
 		List<PhotoCategory> availableCategories = new ArrayList<>();
@@ -109,6 +130,72 @@ public class DPhotoAlbumContractService {
 		}
 
 		return availableCategories;
+	}
+	
+	public List<DPhoto> getAllPhotosByCategory(long categoryId) {
+
+		List<DPhoto> photos = null;
+
+		try {
+			Tuple4<List<String>, List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
+					contract.getAllPhotosFromCategory(new BigInteger(String.valueOf(categoryId))).send();
+			
+			int photoListSize = tmpPhotos.getValue1().size();
+			photos = new ArrayList<>(photoListSize);
+			
+			for(int idx = 0; idx < photoListSize; ++idx) {
+				DPhoto photo = new DPhoto();
+				photo.setIndex(new BigInteger(String.valueOf(idx)));
+				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
+				photo.setOwner(tmpPhotos.getValue1().get(idx));
+				
+				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue2().get(idx), tmpPhotos.getValue2().size());
+				photo.getIpfsHash().hashFunction = tmpPhotos.getValue3().get(idx);
+				photo.getIpfsHash().size = tmpPhotos.getValue4().get(idx);
+				
+				photos.add(photo);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return photos;		
+	}
+	
+	public List<DPhoto> getAllPhotosByCategoryAndPhotographer(String photographer, long categoryId) {
+
+		List<DPhoto> photos = null;
+
+		try {
+			Tuple3<List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
+					contract.getAllPhotosForPhotographerByCategory(photographer, new BigInteger(String.valueOf(categoryId))).send();
+			
+			int photoListSize = tmpPhotos.getValue1().size();
+			photos = new ArrayList<>(photoListSize);
+			
+			for(int idx = 0; idx < photoListSize; ++idx) {
+				DPhoto photo = new DPhoto();
+				photo.setIndex(new BigInteger(String.valueOf(idx)));
+				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
+				photo.setOwner(photographer);
+				
+				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue1().get(idx), tmpPhotos.getValue2().size());
+				photo.getIpfsHash().hashFunction = tmpPhotos.getValue2().get(idx);
+				photo.getIpfsHash().size = tmpPhotos.getValue3().get(idx);
+				
+				photos.add(photo);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return photos;		
+	}	
+
+	public String getMsgSenderAddress() {
+		return credentials.getAddress();
 	}
 
 	private Web3j web3;
