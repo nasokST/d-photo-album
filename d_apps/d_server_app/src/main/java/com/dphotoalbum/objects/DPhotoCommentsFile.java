@@ -1,11 +1,17 @@
 package com.dphotoalbum.objects;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
 import com.dphotoalbum.config.PhotoCategoryType;
 
-public class DPhotoCommentsFile {
+public class DPhotoCommentsFile implements Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8989807234136766488L;
 
 	public PhotoCategoryType getCategory() {
 		return category;

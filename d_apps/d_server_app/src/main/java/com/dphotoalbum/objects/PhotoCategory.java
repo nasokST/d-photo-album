@@ -1,5 +1,6 @@
 package com.dphotoalbum.objects;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 import org.web3j.abi.datatypes.Uint;
@@ -7,8 +8,13 @@ import org.web3j.abi.datatypes.Uint;
 import com.dphotoalbum.config.DPhotoAlbumConfig;
 import com.dphotoalbum.config.PhotoCategoryType;
 
-public class PhotoCategory {
+public class PhotoCategory implements Serializable  {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4705843698814784848L;
+
 	public PhotoCategory(PhotoCategoryType type) {
 		initForType(type);
 	}

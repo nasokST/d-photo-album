@@ -2,6 +2,7 @@ package com.dphotoalbum.services;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,14 +74,14 @@ public class PhotoAlbumService {
 			try {
 				String commentsFileStr = om.writeValueAsString(photoComments.getComments());
 
-				commentsIpfsHash = IPFSUtils.uploadDoc("", commentsFileStr.getBytes());
+				commentsIpfsHash = IPFSUtils.uploadDoc("", commentsFileStr.getBytes(StandardCharsets.UTF_8));
 
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
 
 			if (null != commentsIpfsHash) {
-				DPhotoCommentIPFS ipfsPhotoComment = null;
+				DPhotoCommentIPFS ipfsPhotoComment = new DPhotoCommentIPFS();
 				ipfsPhotoComment.setCategory(photoComments.getComments().getCategory());
 				ipfsPhotoComment.setPhotoIndex(photoComments.getComments().getPhotoIndex());
 				ipfsPhotoComment.setIpfsHash(commentsIpfsHash);
@@ -102,7 +103,7 @@ public class PhotoAlbumService {
 			try {
 
 				byte[] commentsBts = IPFSUtils.downloadFile(commentHash);
-				String commentsStr = String.valueOf(commentsBts);
+				String commentsStr = new String(commentsBts);
 
 				ObjectMapper objectMapper = new ObjectMapper();				
 				comments = objectMapper.readValue(commentsStr, DPhotoCommentsFile.class);
@@ -118,7 +119,7 @@ public class PhotoAlbumService {
 			}
 		}
 
-		return null;
+		return new DPhotoCommentsFile();
 	}
 
 	public List<DPhoto> getAllPhotosByCategory(long categoryId) {

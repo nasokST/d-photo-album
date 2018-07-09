@@ -1,7 +1,14 @@
 package com.dphotoalbum.objects;
 
-public class DPhotoCommentsInput {
+import java.io.Serializable;
+
+public class DPhotoCommentsInput implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3414368011669183996L;
+
 	public String getPk() {
 		return pk;
 	}

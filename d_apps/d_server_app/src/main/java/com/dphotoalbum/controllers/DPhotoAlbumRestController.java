@@ -23,6 +23,7 @@ import com.dphotoalbum.objects.DPhotoIPFS;
 import com.dphotoalbum.objects.DPhotoCommentsFile;
 import com.dphotoalbum.objects.DPhotoCommentsInput;
 import com.dphotoalbum.objects.DPhoto;
+import com.dphotoalbum.objects.DPhotoComment;
 import com.dphotoalbum.services.PhotoAlbumService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.shumencoin.node.NodeApplication;
@@ -76,7 +77,7 @@ public class DPhotoAlbumRestController {
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			new ResponseEntity<Object>("ERROR uploading file", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Object>("ERROR uploading file", HttpStatus.BAD_REQUEST);
 		}
 
 		return new ResponseEntity<Object>("OK", HttpStatus.OK);
@@ -92,16 +93,16 @@ public class DPhotoAlbumRestController {
 
 		return new ResponseEntity<Object>("OK", HttpStatus.OK);
 	}
-	@GetMapping("/dphoto/comment/{cateforyId/{photoIndex}}")
+	@GetMapping("/dphoto/comment/{cateforyId}/{photoIndex}")
 	public ResponseEntity<?> getPhotoComments(@PathVariable long cateforyId, @PathVariable long photoIndex) {
 		
 		DPhotoCommentsFile comments = photoAlbumService.getComments(cateforyId, photoIndex);
 
 		if (null == comments) {
-			new ResponseEntity<Object>("ERROR uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Object>("ERROR uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<Object>("OK", HttpStatus.OK);
+		return new ResponseEntity<Object>(comments, HttpStatus.OK);
 	}	
 	
 	

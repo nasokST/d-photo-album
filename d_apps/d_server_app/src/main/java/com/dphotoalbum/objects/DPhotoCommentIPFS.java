@@ -1,10 +1,16 @@
 package com.dphotoalbum.objects;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 import com.dphotoalbum.config.PhotoCategoryType;
 
-public class DPhotoCommentIPFS {
+public class DPhotoCommentIPFS implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1827653448243095772L;
+
 	public BigInteger getPhotoIndex() {
 		return photoIndex;
 	}

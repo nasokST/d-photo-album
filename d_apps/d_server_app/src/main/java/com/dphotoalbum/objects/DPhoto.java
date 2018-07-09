@@ -2,6 +2,11 @@ package com.dphotoalbum.objects;
 
 public class DPhoto extends DPhotoIPFS {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9066947188838989769L;
+
 	public DPhoto() {
 		super();
 	}
