@@ -22,7 +22,6 @@ public class DPhotoCategoryContractService {
 			contract = DPhotoAlbumCategory_sol_DPhotoAlbumCategory
 					.deploy(web3, credentials, ManagedTransaction.GAS_PRICE, BigInteger.valueOf(4600000), categoryId, albumAddress).send();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -17,7 +17,7 @@ import org.web3j.tx.ManagedTransaction;
 
 import com.dphotoalbum.config.PhotoCategoryType;
 import com.dphotoalbum.contracts.DPhotoAlbum_sol_DPhotoAlbum;
-import com.dphotoalbum.objects.DPhoto;
+import com.dphotoalbum.objects.DPhotoIPFS;
 import com.dphotoalbum.objects.DPhotoCommentIPFS;
 import com.dphotoalbum.objects.IPFSHashInterface;
 import com.dphotoalbum.objects.PhotoCategory;
@@ -34,7 +34,6 @@ public class DPhotoAlbumContractService {
 			contract = DPhotoAlbum_sol_DPhotoAlbum
 					.deploy(web3, credentials, ManagedTransaction.GAS_PRICE, BigInteger.valueOf(4600000)).send();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -64,7 +63,7 @@ public class DPhotoAlbumContractService {
 		return true;
 	}
 
-	public boolean addPhoto(DPhoto dphoto) {
+	public boolean addPhoto(DPhotoIPFS dphoto) {
 		try {
 			TransactionReceipt txInfo = contract
 					.addPhoto(new BigInteger(String.valueOf(dphoto.getCategory().getValue())),
@@ -132,9 +131,9 @@ public class DPhotoAlbumContractService {
 		return availableCategories;
 	}
 	
-	public List<DPhoto> getAllPhotosByCategory(long categoryId) {
+	public List<DPhotoIPFS> getAllPhotosByCategory(long categoryId) {
 
-		List<DPhoto> photos = null;
+		List<DPhotoIPFS> photos = null;
 
 		try {
 			Tuple4<List<String>, List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
@@ -144,7 +143,7 @@ public class DPhotoAlbumContractService {
 			photos = new ArrayList<>(photoListSize);
 			
 			for(int idx = 0; idx < photoListSize; ++idx) {
-				DPhoto photo = new DPhoto();
+				DPhotoIPFS photo = new DPhotoIPFS();
 				photo.setIndex(new BigInteger(String.valueOf(idx)));
 				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
 				photo.setOwner(tmpPhotos.getValue1().get(idx));
@@ -163,9 +162,9 @@ public class DPhotoAlbumContractService {
 		return photos;		
 	}
 	
-	public List<DPhoto> getAllPhotosByCategoryAndPhotographer(String photographer, long categoryId) {
+	public List<DPhotoIPFS> getAllPhotosByCategoryAndPhotographer(String photographer, long categoryId) {
 
-		List<DPhoto> photos = null;
+		List<DPhotoIPFS> photos = null;
 
 		try {
 			Tuple3<List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
@@ -175,7 +174,7 @@ public class DPhotoAlbumContractService {
 			photos = new ArrayList<>(photoListSize);
 			
 			for(int idx = 0; idx < photoListSize; ++idx) {
-				DPhoto photo = new DPhoto();
+				DPhotoIPFS photo = new DPhotoIPFS();
 				photo.setIndex(new BigInteger(String.valueOf(idx)));
 				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
 				photo.setOwner(photographer);

@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dphotoalbum.config.PhotoCategoryType;
-import com.dphotoalbum.objects.DPhoto;
+import com.dphotoalbum.objects.DPhotoIPFS;
 import com.dphotoalbum.objects.DPhotoCommentsFile;
 import com.dphotoalbum.objects.DPhotoCommentsInput;
-import com.dphotoalbum.objects.DPhotoInput;
+import com.dphotoalbum.objects.DPhoto;
 import com.dphotoalbum.services.PhotoAlbumService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.shumencoin.node.NodeApplication;
@@ -48,7 +48,7 @@ public class DPhotoAlbumRestController {
 			@RequestParam("category") List<PhotoCategoryType> categories, 
 			@RequestParam("pk") List<String> keys) {
 
-		List<DPhotoInput> dphotos = new ArrayList<DPhotoInput>();
+		List<DPhoto> dphotos = new ArrayList<DPhoto>();
 
 		try {
 			boolean listSizeEqual = (inputFiles.size() == categories.size() && inputFiles.size() == keys.size());
@@ -60,7 +60,7 @@ public class DPhotoAlbumRestController {
 			int inputFilesListSize = inputFiles.size();
 			for (int idx = 0; idx < inputFilesListSize; ++idx) {
 
-				DPhotoInput dphoto = new DPhotoInput();
+				DPhoto dphoto = new DPhoto();
 
 				dphoto.setCategory(categories.get(idx));
 				dphoto.setPk(keys.get(idx));
@@ -231,13 +231,11 @@ public class DPhotoAlbumRestController {
 //    // ====== ADDRESS =====
 //    @RequestMapping("/address/{address}/transactions")
 //    public ResponseEntity<?> addressGetTransactions() {
-//	// TODO
 //	return new ResponseEntity<Object>("addressGetTransactions() NOT IMPLEMENTED ", HttpStatus.BAD_REQUEST);
 //    }
 //
 //    @RequestMapping("/address/{address}/balance")
 //    public ResponseEntity<?> addressGetBalance() {
-//	// TODO
 //	return new ResponseEntity<Object>("addressGetBalance() NOT IMPLEMENTED ", HttpStatus.BAD_REQUEST);
 //    }
 //

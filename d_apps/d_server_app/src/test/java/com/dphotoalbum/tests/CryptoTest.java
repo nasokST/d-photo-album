@@ -53,7 +53,6 @@ public class CryptoTest {
 			System.out.println("SIGNATURE: " + signOk);
 
 		} catch (SignatureException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

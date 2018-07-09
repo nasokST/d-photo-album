@@ -1,37 +1,38 @@
 package com.dphotoalbum.objects;
 
-import java.math.BigInteger;
+public class DPhoto extends DPhotoIPFS {
 
-import com.dphotoalbum.config.PhotoCategoryType;
-
-public class DPhoto {
-	public BigInteger getIndex() {
-		return index;
+	public DPhoto() {
+		super();
 	}
-	public void setIndex(BigInteger index) {
-		this.index = index;
-	}
-	public String getOwner() {
-		return owner;
-	}
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-	public PhotoCategoryType getCategory() {
-		return category;
-	}
-	public void setCategory(PhotoCategoryType category) {
-		this.category = category;
-	}
-	public IPFSHashInterface getIpfsHash() {
-		return ipfsHash;
-	}
-	public void setIpfsHash(IPFSHashInterface ipfsHash) {
-		this.ipfsHash = ipfsHash;
+	
+	public DPhoto(DPhotoIPFS ipfsPhoto) {
+		this.setIndex(ipfsPhoto.getIndex());
+		this.setOwner(ipfsPhoto.getOwner());
+		this.setCategory(ipfsPhoto.getCategory());
+		this.setIpfsHash(ipfsPhoto.getIpfsHash());
 	}
 
-	private BigInteger index;
-	private String owner;
-	private PhotoCategoryType category;
-	private IPFSHashInterface ipfsHash;
+	public String getPk() {
+		return pk;
+	}
+	public void setPk(String pk) {
+		this.pk = pk;
+	}
+	public long getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+	public byte[] getFile() {
+		return file;
+	}
+	public void setFile(byte[] file) {
+		this.file = file;
+	}
+
+	private String pk;
+	private long fileSize;
+	private byte[] file;
 }

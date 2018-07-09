@@ -1,26 +1,50 @@
 package com.dphotoalbum.ipfs;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import com.dphotoalbum.config.DPhotoAlbumConfig;
 import com.dphotoalbum.objects.IPFSHashInterface;
 
+import io.ipfs.api.IPFS;
+import io.ipfs.api.MerkleNode;
+import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 
 public class IPFSUtils {
 	
-	public static IPFSHashInterface uploadDoc(byte[] docFile) {
+	public static IPFSHashInterface uploadDoc(String name, byte[] docFile) {
 		IPFSHashInterface hashInterface = null;
-		
-		// TODO file uploading
-		
+
+		try {
+			NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper(name, docFile);
+
+			IPFS ipfs = new IPFS(DPhotoAlbumConfig.getIPFSProvider());			
+			
+			MerkleNode addResult = ipfs.add(file).get(0);
+
+			hashInterface = ipfsHashToHashInterface(addResult.hash);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+
 		return hashInterface;
 	}
 	
 	public static byte[] downloadFile(IPFSHashInterface hashInterface) {
-		byte[] docFile = null;
 		
-		// TODO file downloading
+		byte[] docFile = null;
+		try {
+
+			Multihash multihash = hashInterfaceToIPFSHash(hashInterface);
+			
+			IPFS ipfs = new IPFS(DPhotoAlbumConfig.getIPFSProvider());
+			docFile = ipfs.cat(multihash);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		return docFile;
 	}
