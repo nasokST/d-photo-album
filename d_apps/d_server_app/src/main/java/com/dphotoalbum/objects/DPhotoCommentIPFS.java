@@ -23,15 +23,15 @@ public class DPhotoCommentIPFS {
 	public void setAutor(String autor) {
 		this.autor = autor;
 	}
-	public IPFSMultihash getIpfsHash() {
+	public IPFSHashInterface getIpfsHash() {
 		return ipfsHash;
 	}
-	public void setIpfsHash(IPFSMultihash ipfsHash) {
+	public void setIpfsHash(IPFSHashInterface ipfsHash) {
 		this.ipfsHash = ipfsHash;
 	}
 
 	private BigInteger photoIndex;
 	private PhotoCategoryType category;
 	private String autor;
-	private IPFSMultihash ipfsHash;
+	private IPFSHashInterface ipfsHash;
 }

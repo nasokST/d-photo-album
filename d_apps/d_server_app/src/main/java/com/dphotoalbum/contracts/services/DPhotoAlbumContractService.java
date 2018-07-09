@@ -19,7 +19,7 @@ import com.dphotoalbum.config.PhotoCategoryType;
 import com.dphotoalbum.contracts.DPhotoAlbum_sol_DPhotoAlbum;
 import com.dphotoalbum.objects.DPhoto;
 import com.dphotoalbum.objects.DPhotoCommentIPFS;
-import com.dphotoalbum.objects.IPFSMultihash;
+import com.dphotoalbum.objects.IPFSHashInterface;
 import com.dphotoalbum.objects.PhotoCategory;
 
 public class DPhotoAlbumContractService {
@@ -94,13 +94,13 @@ public class DPhotoAlbumContractService {
 		return true;
 	}
 
-	public IPFSMultihash getComments(long cateforyId, long photoIndex) {
-		IPFSMultihash ipfsMultihash = null;
+	public IPFSHashInterface getComments(long cateforyId, long photoIndex) {
+		IPFSHashInterface ipfsMultihash = null;
 		try {
 			Tuple3<byte[], BigInteger, BigInteger> commentHash = contract.getPhotoComments(new BigInteger(String.valueOf(cateforyId)),
 					new BigInteger(String.valueOf(photoIndex))).send();
 
-			ipfsMultihash = new IPFSMultihash();
+			ipfsMultihash = new IPFSHashInterface();
 			ipfsMultihash.digest = Arrays.copyOf(commentHash.getValue1(), commentHash.getValue1().length);
 			ipfsMultihash.hashFunction = commentHash.getValue2();
 			ipfsMultihash.size = commentHash.getValue3();

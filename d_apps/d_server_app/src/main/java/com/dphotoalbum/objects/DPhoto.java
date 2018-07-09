@@ -23,15 +23,15 @@ public class DPhoto {
 	public void setCategory(PhotoCategoryType category) {
 		this.category = category;
 	}
-	public IPFSMultihash getIpfsHash() {
+	public IPFSHashInterface getIpfsHash() {
 		return ipfsHash;
 	}
-	public void setIpfsHash(IPFSMultihash ipfsHash) {
+	public void setIpfsHash(IPFSHashInterface ipfsHash) {
 		this.ipfsHash = ipfsHash;
 	}
 
 	private BigInteger index;
 	private String owner;
 	private PhotoCategoryType category;
-	private IPFSMultihash ipfsHash;
+	private IPFSHashInterface ipfsHash;
 }

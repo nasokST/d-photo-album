@@ -15,7 +15,7 @@ import com.dphotoalbum.objects.DPhotoCommentIPFS;
 import com.dphotoalbum.objects.DPhotoCommentsFile;
 import com.dphotoalbum.objects.DPhotoCommentsInput;
 import com.dphotoalbum.objects.DPhotoInput;
-import com.dphotoalbum.objects.IPFSMultihash;
+import com.dphotoalbum.objects.IPFSHashInterface;
 import com.dphotoalbum.objects.PhotoCategory;
 
 @Service("photoAlbumService")
@@ -44,7 +44,7 @@ public class PhotoAlbumService {
 
 		if(null != tmpAlbumContract) {
 			
-			IPFSMultihash photoIpfsHash = null;
+			IPFSHashInterface photoIpfsHash = null;
 			// TODO !!!!!!! ADDING on IPFS and getting hash
 
 
@@ -61,7 +61,7 @@ public class PhotoAlbumService {
 
 		if(null != tmpAlbumContract) {
 
-			IPFSMultihash commentsIpfsHash = null;
+			IPFSHashInterface commentsIpfsHash = null;
 			// TODO !!!!!!! ADDING on IPFS and getting hash
 
 
@@ -79,7 +79,7 @@ public class PhotoAlbumService {
 
 	public DPhotoCommentsFile getComments(long categoryId, long photoIndex) {
 
-		IPFSMultihash commentHash = albumContractService.getComments(categoryId, photoIndex);
+		IPFSHashInterface commentHash = albumContractService.getComments(categoryId, photoIndex);
 
 		if (null != commentHash) {
 			DPhotoCommentsFile comments = null;
