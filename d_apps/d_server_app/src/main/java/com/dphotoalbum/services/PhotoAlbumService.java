@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.web3j.crypto.Credentials;
 
 import com.dphotoalbum.config.DPhotoAlbumConfig;
 import com.dphotoalbum.config.PhotoCategoryType;
@@ -141,6 +143,11 @@ public class PhotoAlbumService {
 	}
 
 	public List<DPhoto> getAllPhotosByPhotographerByCategory(String photographer, long categoryId) {
+		
+		DPhotoAlbumContractService albumContractService = initAlbumService();
+		if(null == albumContractService) {
+			return Collections.emptyList();
+		}		
 
 		List<DPhotoIPFS> ipfsPhotos = albumContractService.getAllPhotosByCategoryAndPhotographer(photographer, categoryId);
 		
@@ -157,9 +164,24 @@ public class PhotoAlbumService {
 		
 		return photos;		
 	}
+	
+	public List<DPhoto> getAllPhotosByPhotographerPKByCategory(String photographerPK, long categoryId) {
+		
+		Credentials credentials = Credentials.create(photographerPK);
 
-	public static boolean initAlbum() {
-		albumContractService = initAlbum(DPhotoAlbumConfig.getPrivateKey());
+		return getAllPhotosByPhotographerByCategory(credentials.getAddress(), categoryId);
+	}
+
+	public static DPhotoAlbumContractService initAlbumService() {
+		return initAlbumService(DPhotoAlbumConfig.getPrivateKey());
+	}
+	
+	public static DPhotoAlbumContractService initAlbumService(String privateKey) {
+		return initAlbum(privateKey);
+	}	
+	
+	public static boolean initGlobalAlbum() {
+		albumContractService = initAlbumService(DPhotoAlbumConfig.getPrivateKey());
 		return (null != albumContractService);
 	}
 

@@ -143,20 +143,21 @@ public class DPhotoAlbumContractService {
 		try {
 			Tuple4<List<String>, List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
 					contract.getAllPhotosFromCategory(new BigInteger(String.valueOf(categoryId))).send();
-			
+
 			int photoListSize = tmpPhotos.getValue1().size();
 			photos = new ArrayList<>(photoListSize);
-			
+
 			for(int idx = 0; idx < photoListSize; ++idx) {
 				DPhotoIPFS photo = new DPhotoIPFS();
 				photo.setIndex(new BigInteger(String.valueOf(idx)));
 				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
 				photo.setOwner(tmpPhotos.getValue1().get(idx));
-				
-				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue2().get(idx), tmpPhotos.getValue2().size());
+
+				photo.setIpfsHash(new IPFSHashInterface());
+				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue2().get(idx), tmpPhotos.getValue2().get(idx).length);
 				photo.getIpfsHash().hashFunction = tmpPhotos.getValue3().get(idx);
 				photo.getIpfsHash().size = tmpPhotos.getValue4().get(idx);
-				
+
 				photos.add(photo);
 			}
 			
@@ -184,7 +185,8 @@ public class DPhotoAlbumContractService {
 				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
 				photo.setOwner(photographer);
 				
-				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue1().get(idx), tmpPhotos.getValue2().size());
+				photo.setIpfsHash(new IPFSHashInterface());
+				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue1().get(idx), tmpPhotos.getValue1().get(idx).length);
 				photo.getIpfsHash().hashFunction = tmpPhotos.getValue2().get(idx);
 				photo.getIpfsHash().size = tmpPhotos.getValue3().get(idx);
 				

@@ -44,7 +44,7 @@ public class DPhotoAlbumApplication {
 //			e.printStackTrace();
 //		}
 
-		PhotoAlbumService.initAlbum();
+		PhotoAlbumService.initGlobalAlbum();
 
 		SpringApplication.run(DPhotoAlbumApplication.class, args);
 	}
