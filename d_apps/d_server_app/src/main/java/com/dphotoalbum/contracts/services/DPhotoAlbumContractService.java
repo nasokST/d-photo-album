@@ -41,6 +41,10 @@ public class DPhotoAlbumContractService {
 		return (null != contract);
 	}
 
+	public String getMsgSenderAddress() {
+		return credentials.getAddress();
+	}
+
 	public boolean load(String address) {
 		contract = DPhotoAlbum_sol_DPhotoAlbum.load(address, web3, credentials, ManagedTransaction.GAS_PRICE,
 				Contract.GAS_LIMIT);
@@ -198,10 +202,6 @@ public class DPhotoAlbumContractService {
 		}
 		
 		return photos;		
-	}	
-
-	public String getMsgSenderAddress() {
-		return credentials.getAddress();
 	}
 
 	private Web3j web3;
