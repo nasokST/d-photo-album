@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.dphotoalbum.ipfs.IPFSUtils;
-import com.dphotoalbum.objects.IPFSHashInterface;
+import com.dphotoalbum.objects.IPFSHashUnpacked;
 
 import io.ipfs.multihash.Multihash;
 
@@ -18,7 +18,7 @@ public class IPFSUtilsTest {
 				
 		Multihash multihash = new Multihash(bts);
 
-		IPFSHashInterface hashinterface = IPFSUtils.ipfsHashToHashInterface(multihash);
+		IPFSHashUnpacked hashinterface = IPFSUtils.ipfsHashToHashInterface(multihash);
 
 		Multihash rezMultihash = IPFSUtils.hashInterfaceToIPFSHash(hashinterface);
 		

@@ -17,9 +17,10 @@ import org.web3j.tx.ManagedTransaction;
 
 import com.dphotoalbum.config.PhotoCategoryType;
 import com.dphotoalbum.contracts.DPhotoAlbum_sol_DPhotoAlbum;
+import com.dphotoalbum.ipfs.IPFSUtils;
 import com.dphotoalbum.objects.DPhotoIPFS;
 import com.dphotoalbum.objects.DPhotoCommentIPFS;
-import com.dphotoalbum.objects.IPFSHashInterface;
+import com.dphotoalbum.objects.IPFSHashUnpacked;
 import com.dphotoalbum.objects.PhotoCategory;
 import com.dphotoalbum.utils.DPhotoAlbumUtils;
 
@@ -43,6 +44,10 @@ public class DPhotoAlbumContractService {
 
 	public String getMsgSenderAddress() {
 		return credentials.getAddress();
+	}
+
+	public String getContractAddress() {
+		return contract.getContractAddress();
 	}
 
 	public boolean load(String address) {
@@ -72,7 +77,8 @@ public class DPhotoAlbumContractService {
 		try {
 			TransactionReceipt txInfo = contract
 					.addPhoto(new BigInteger(String.valueOf(dphoto.getCategory().getValue())),
-							dphoto.getIpfsHash().digest, dphoto.getIpfsHash().hashFunction, dphoto.getIpfsHash().size)
+							dphoto.getIpfsHashUnpacked().digest, dphoto.getIpfsHashUnpacked().hashFunction,
+							dphoto.getIpfsHashUnpacked().size)
 					.send();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,16 +104,16 @@ public class DPhotoAlbumContractService {
 		return true;
 	}
 
-	public IPFSHashInterface getComments(long cateforyId, long photoIndex) {
+	public IPFSHashUnpacked getComments(long cateforyId, long photoIndex) {
 
-		IPFSHashInterface ipfsMultihash = null;
+		IPFSHashUnpacked ipfsMultihash = null;
 
 		try {
-			Tuple3<byte[], BigInteger, BigInteger> commentHash = contract.getPhotoComments(new BigInteger(String.valueOf(cateforyId)),
-					new BigInteger(String.valueOf(photoIndex))).send();
-			
-			if(!DPhotoAlbumUtils.isByteArrayEmpty(commentHash.getValue1())) {
-				ipfsMultihash = new IPFSHashInterface();
+			Tuple3<byte[], BigInteger, BigInteger> commentHash = contract.getPhotoComments(
+					new BigInteger(String.valueOf(cateforyId)), new BigInteger(String.valueOf(photoIndex))).send();
+
+			if (!DPhotoAlbumUtils.isByteArrayEmpty(commentHash.getValue1())) {
+				ipfsMultihash = new IPFSHashUnpacked();
 				ipfsMultihash.digest = Arrays.copyOf(commentHash.getValue1(), commentHash.getValue1().length);
 				ipfsMultihash.hashFunction = commentHash.getValue2();
 				ipfsMultihash.size = commentHash.getValue3();
@@ -116,7 +122,7 @@ public class DPhotoAlbumContractService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return ipfsMultihash;
 	}
 
@@ -139,69 +145,74 @@ public class DPhotoAlbumContractService {
 
 		return availableCategories;
 	}
-	
+
 	public List<DPhotoIPFS> getAllPhotosByCategory(long categoryId) {
 
 		List<DPhotoIPFS> photos = null;
 
 		try {
-			Tuple4<List<String>, List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
-					contract.getAllPhotosFromCategory(new BigInteger(String.valueOf(categoryId))).send();
+			Tuple4<List<String>, List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos = contract
+					.getAllPhotosFromCategory(new BigInteger(String.valueOf(categoryId))).send();
 
 			int photoListSize = tmpPhotos.getValue1().size();
 			photos = new ArrayList<>(photoListSize);
 
-			for(int idx = 0; idx < photoListSize; ++idx) {
+			for (int idx = 0; idx < photoListSize; ++idx) {
 				DPhotoIPFS photo = new DPhotoIPFS();
 				photo.setIndex(new BigInteger(String.valueOf(idx)));
-				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
+				photo.setCategory(PhotoCategoryType.forValue((int) categoryId));
 				photo.setOwner(tmpPhotos.getValue1().get(idx));
 
-				photo.setIpfsHash(new IPFSHashInterface());
-				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue2().get(idx), tmpPhotos.getValue2().get(idx).length);
-				photo.getIpfsHash().hashFunction = tmpPhotos.getValue3().get(idx);
-				photo.getIpfsHash().size = tmpPhotos.getValue4().get(idx);
+				photo.setIpfsHashUnpacked(new IPFSHashUnpacked());
+				photo.getIpfsHashUnpacked().digest = Arrays.copyOf(tmpPhotos.getValue2().get(idx), tmpPhotos.getValue2().get(idx).length);
+				photo.getIpfsHashUnpacked().hashFunction = tmpPhotos.getValue3().get(idx);
+				photo.getIpfsHashUnpacked().size = tmpPhotos.getValue4().get(idx);
+				
+				photo.setIpfsHash(IPFSUtils.hashInterfaceToIPFSHash(photo.getIpfsHashUnpacked()).toBase58());
 
 				photos.add(photo);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return photos;		
+
+		return photos;
 	}
-	
+
 	public List<DPhotoIPFS> getAllPhotosByCategoryAndPhotographer(String photographer, long categoryId) {
 
 		List<DPhotoIPFS> photos = null;
 
 		try {
-			Tuple3<List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos =
-					contract.getAllPhotosForPhotographerByCategory(photographer, new BigInteger(String.valueOf(categoryId))).send();
-			
+			Tuple3<List<byte[]>, List<BigInteger>, List<BigInteger>> tmpPhotos = contract
+					.getAllPhotosForPhotographerByCategory(photographer, new BigInteger(String.valueOf(categoryId)))
+					.send();
+
 			int photoListSize = tmpPhotos.getValue1().size();
 			photos = new ArrayList<>(photoListSize);
-			
-			for(int idx = 0; idx < photoListSize; ++idx) {
+
+			for (int idx = 0; idx < photoListSize; ++idx) {
 				DPhotoIPFS photo = new DPhotoIPFS();
 				photo.setIndex(new BigInteger(String.valueOf(idx)));
-				photo.setCategory(PhotoCategoryType.forValue((int)categoryId));
+				photo.setCategory(PhotoCategoryType.forValue((int) categoryId));
 				photo.setOwner(photographer);
+
+				photo.setIpfsHashUnpacked(new IPFSHashUnpacked());
+				photo.getIpfsHashUnpacked().digest = Arrays.copyOf(tmpPhotos.getValue1().get(idx), tmpPhotos.getValue1().get(idx).length);
+				photo.getIpfsHashUnpacked().hashFunction = tmpPhotos.getValue2().get(idx);
+				photo.getIpfsHashUnpacked().size = tmpPhotos.getValue3().get(idx);
 				
-				photo.setIpfsHash(new IPFSHashInterface());
-				photo.getIpfsHash().digest = Arrays.copyOf(tmpPhotos.getValue1().get(idx), tmpPhotos.getValue1().get(idx).length);
-				photo.getIpfsHash().hashFunction = tmpPhotos.getValue2().get(idx);
-				photo.getIpfsHash().size = tmpPhotos.getValue3().get(idx);
-				
+				photo.setIpfsHash(IPFSUtils.hashInterfaceToIPFSHash(photo.getIpfsHashUnpacked()).toBase58());
+
 				photos.add(photo);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return photos;		
+
+		return photos;
 	}
 
 	private Web3j web3;

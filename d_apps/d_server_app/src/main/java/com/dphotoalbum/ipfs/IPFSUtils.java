@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 import com.dphotoalbum.config.DPhotoAlbumConfig;
-import com.dphotoalbum.objects.IPFSHashInterface;
+import com.dphotoalbum.objects.IPFSHashUnpacked;
 
 import io.ipfs.api.IPFS;
 import io.ipfs.api.MerkleNode;
@@ -14,8 +14,8 @@ import io.ipfs.multihash.Multihash;
 
 public class IPFSUtils {
 	
-	public static IPFSHashInterface uploadDoc(String name, byte[] docFile) {
-		IPFSHashInterface hashInterface = null;
+	public static IPFSHashUnpacked uploadDoc(String name, byte[] docFile) {
+		IPFSHashUnpacked hashInterface = null;
 
 		try {
 			NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper(name, docFile);
@@ -33,7 +33,7 @@ public class IPFSUtils {
 		return hashInterface;
 	}
 	
-	public static byte[] downloadFile(IPFSHashInterface hashInterface) {
+	public static byte[] downloadFile(IPFSHashUnpacked hashInterface) {
 		
 		byte[] docFile = null;
 		try {
@@ -49,8 +49,8 @@ public class IPFSUtils {
 		return docFile;
 	}
 	
-	public static IPFSHashInterface ipfsHashToHashInterface(Multihash multihash) {
-		IPFSHashInterface hashInterface = new IPFSHashInterface();
+	public static IPFSHashUnpacked ipfsHashToHashInterface(Multihash multihash) {
+		IPFSHashUnpacked hashInterface = new IPFSHashUnpacked();
 
 		hashInterface.digest = Arrays.copyOfRange(multihash.toBytes(), 2, multihash.toBytes().length);
 		hashInterface.hashFunction = new BigInteger(String.valueOf(multihash.toBytes()[0]));
@@ -59,7 +59,7 @@ public class IPFSUtils {
 		return hashInterface;
 	}
 
-	public static Multihash hashInterfaceToIPFSHash(IPFSHashInterface hashInterface) {
+	public static Multihash hashInterfaceToIPFSHash(IPFSHashUnpacked hashInterface) {
 		
 		byte[] multihashBts = new byte[hashInterface.digest.length + 2];
 		

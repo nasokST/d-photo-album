@@ -3,6 +3,8 @@ package com.dphotoalbum.utils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.dphotoalbum.objects.IPFSHashUnpacked;
+
 public class DPhotoAlbumUtils {
 	
 	public static boolean isByteArrayEmpty(byte[] byteAttay) {

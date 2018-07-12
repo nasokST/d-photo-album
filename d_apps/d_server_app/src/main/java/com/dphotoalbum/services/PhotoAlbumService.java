@@ -23,7 +23,7 @@ import com.dphotoalbum.objects.DPhotoCommentsFile;
 import com.dphotoalbum.objects.DPhotoCommentsInput;
 import com.dphotoalbum.objects.DPhoto;
 import com.dphotoalbum.objects.DPhotoComment;
-import com.dphotoalbum.objects.IPFSHashInterface;
+import com.dphotoalbum.objects.IPFSHashUnpacked;
 import com.dphotoalbum.objects.PhotoCategory;
 import com.dphotoalbum.utils.DPhotoAlbumUtils;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -34,17 +34,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service("photoAlbumService")
 public class PhotoAlbumService {
 
-	/**
-	 * 
-	 */
-	private static DPhotoAlbumContractService albumContractService;
+	// /**
+	// *
+	// */
+	// private static DPhotoAlbumContractService albumContractService;
 
 	/**
 	 * 
 	 * @return
 	 */
 	public List<PhotoCategory> getAllcategories() {
+		DPhotoAlbumContractService albumContractService = getAlbumService();
 		return albumContractService.getAvailableCategories();
+	}
+
+	/**
+	 * 
+	 * @param dphoto
+	 * @return
+	 */
+	public boolean addPhoto(DPhoto dphoto) {
+
+		DPhotoAlbumContractService tmpAlbumContract = getAlbumService(dphoto.getPk());
+
+		if (null != tmpAlbumContract) {
+
+			IPFSHashUnpacked photoIpfsHash = IPFSUtils.uploadDoc("", dphoto.getFile());
+
+			dphoto.setIpfsHashUnpacked(photoIpfsHash);
+
+			return tmpAlbumContract.addPhoto(dphoto);
+		}
+
+		return false;
 	}
 
 	/**
@@ -65,39 +87,18 @@ public class PhotoAlbumService {
 
 	/**
 	 * 
-	 * @param dphoto
-	 * @return
-	 */
-	public boolean addPhoto(DPhoto dphoto) {
-
-		DPhotoAlbumContractService tmpAlbumContract = initAlbum(dphoto.getPk());
-
-		if (null != tmpAlbumContract) {
-
-			IPFSHashInterface photoIpfsHash = IPFSUtils.uploadDoc("", dphoto.getFile());
-
-			dphoto.setIpfsHash(photoIpfsHash);
-
-			return tmpAlbumContract.addPhoto(dphoto);
-		}
-
-		return false;
-	}
-
-	/**
-	 * 
 	 * @param newPhotoComments
 	 * @return
 	 */
 	public boolean addComments(DPhotoCommentsInput newPhotoComments) {
-		DPhotoAlbumContractService tmpAlbumContract = initAlbum(newPhotoComments.getPk());
+		DPhotoAlbumContractService tmpAlbumContract = getAlbumService(newPhotoComments.getPk());
 
 		if (null != tmpAlbumContract) {
 
 			// get existing comments
 			DPhotoCommentsFile photoComments = getComments(newPhotoComments.getComments().getCategory().getValue(),
-					newPhotoComments.getComments().getPhotoIndex().intValue());			
-			
+					newPhotoComments.getComments().getPhotoIndex().intValue());
+
 			// add new comments to list
 			for (DPhotoComment comment : newPhotoComments.getComments().getComments()) {
 				comment.setAutor(tmpAlbumContract.getMsgSenderAddress());
@@ -105,7 +106,7 @@ public class PhotoAlbumService {
 				photoComments.getComments().add(comment);
 			}
 
-			IPFSHashInterface commentsIpfsHash = null;
+			IPFSHashUnpacked commentsIpfsHash = null;
 
 			ObjectMapper om = new ObjectMapper();
 			try {
@@ -138,7 +139,8 @@ public class PhotoAlbumService {
 	 */
 	public DPhotoCommentsFile getComments(long categoryId, long photoIndex) {
 
-		IPFSHashInterface commentHash = albumContractService.getComments(categoryId, photoIndex);
+		DPhotoAlbumContractService albumContractService = getAlbumService();
+		IPFSHashUnpacked commentHash = albumContractService.getComments(categoryId, photoIndex);
 
 		if (null != commentHash) {
 			DPhotoCommentsFile comments = null;
@@ -163,10 +165,10 @@ public class PhotoAlbumService {
 		}
 
 		DPhotoCommentsFile commentFile = new DPhotoCommentsFile();
-		commentFile.setCategory(PhotoCategoryType.forValue((int)categoryId));
+		commentFile.setCategory(PhotoCategoryType.forValue((int) categoryId));
 		commentFile.setPhotoIndex(new BigInteger(String.valueOf(photoIndex)));
 		commentFile.setComments(new ArrayList<DPhotoComment>());
-		
+
 		return commentFile;
 	}
 
@@ -177,6 +179,7 @@ public class PhotoAlbumService {
 	 */
 	public List<DPhoto> getAllPhotosByCategory(long categoryId) {
 
+		DPhotoAlbumContractService albumContractService = getAlbumService();
 		List<DPhotoIPFS> ipfsPhotos = albumContractService.getAllPhotosByCategory(categoryId);
 
 		List<DPhoto> photos = new ArrayList<>();
@@ -184,8 +187,9 @@ public class PhotoAlbumService {
 
 			DPhoto photo = new DPhoto(ipfsPhoto);
 
-			photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
-			photo.setFileSize(photo.getFile().length);
+			//photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
+			//photo.setFileSize(photo.getFile().length);
+			photo.setIpfsHash((IPFSUtils.hashInterfaceToIPFSHash(ipfsPhoto.getIpfsHashUnpacked())).toBase58());
 
 			photos.add(photo);
 		}
@@ -201,7 +205,7 @@ public class PhotoAlbumService {
 	 */
 	public List<DPhoto> getAllPhotosByPhotographerByCategory(String photographer, long categoryId) {
 
-		DPhotoAlbumContractService albumContractService = initAlbumService();
+		DPhotoAlbumContractService albumContractService = getAlbumService();
 		if (null == albumContractService) {
 			return Collections.emptyList();
 		}
@@ -214,8 +218,9 @@ public class PhotoAlbumService {
 
 			DPhoto photo = new DPhoto(ipfsPhoto);
 
-			photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
-			photo.setFileSize(photo.getFile().length);
+			//photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
+			//photo.setFileSize(photo.getFile().length);
+			photo.setIpfsHash((IPFSUtils.hashInterfaceToIPFSHash(ipfsPhoto.getIpfsHashUnpacked())).toBase58());
 
 			photos.add(photo);
 		}
@@ -240,8 +245,8 @@ public class PhotoAlbumService {
 	 * 
 	 * @return
 	 */
-	public static DPhotoAlbumContractService initAlbumService() {
-		return initAlbumService(DPhotoAlbumConfig.getPrivateKey());
+	public static DPhotoAlbumContractService getAlbumService() {
+		return getAlbumService(DPhotoAlbumConfig.getPrivateKey());
 	}
 
 	/**
@@ -249,17 +254,30 @@ public class PhotoAlbumService {
 	 * @param privateKey
 	 * @return
 	 */
-	public static DPhotoAlbumContractService initAlbumService(String privateKey) {
-		return initAlbum(privateKey);
+	public static DPhotoAlbumContractService getAlbumService(String privateKey) {
+		DPhotoAlbumContractService photoAlbumContractService = new DPhotoAlbumContractService(DPhotoAlbumConfig.getWeb3jProvider(), privateKey);
+		photoAlbumContractService.load(DPhotoAlbumConfig.getAlbumContractAddress());
+		return photoAlbumContractService;
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	public static boolean initGlobalAlbum() {
-		albumContractService = initAlbumService(DPhotoAlbumConfig.getPrivateKey());
-		return (null != albumContractService);
+	public static boolean deployAlbum() {
+
+		DPhotoAlbumContractService photoAlbumContractService = getAlbumService();
+
+		if (!photoAlbumContractService.load(DPhotoAlbumConfig.getAlbumContractAddress())) {
+			photoAlbumContractService.deploy();
+			System.out.println(photoAlbumContractService.getContractAddress());
+
+			if (!photoAlbumContractService.getContractAddress().isEmpty()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -267,14 +285,9 @@ public class PhotoAlbumService {
 	 * @param privateKey
 	 * @return
 	 */
-	public static DPhotoAlbumContractService initAlbum(String privateKey) {
-		DPhotoAlbumContractService photoAlbumContractService = new DPhotoAlbumContractService(
-				DPhotoAlbumConfig.getWeb3jProvider(), privateKey);
-		// try {
-		// photoAlbumService.deploy();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
+	public static DPhotoAlbumContractService deployAlbumCategories() {
+
+		DPhotoAlbumContractService photoAlbumContractService = getAlbumService();
 
 		// adding base categories
 		if (photoAlbumContractService.load(DPhotoAlbumConfig.getAlbumContractAddress())) {

@@ -29,15 +29,15 @@ public class DPhotoCommentIPFS implements Serializable {
 	public void setAutor(String autor) {
 		this.autor = autor;
 	}
-	public IPFSHashInterface getIpfsHash() {
+	public IPFSHashUnpacked getIpfsHash() {
 		return ipfsHash;
 	}
-	public void setIpfsHash(IPFSHashInterface ipfsHash) {
+	public void setIpfsHash(IPFSHashUnpacked ipfsHash) {
 		this.ipfsHash = ipfsHash;
 	}
 
 	private BigInteger photoIndex;
 	private PhotoCategoryType category;
 	private String autor;
-	private IPFSHashInterface ipfsHash;
+	private IPFSHashUnpacked ipfsHash;
 }

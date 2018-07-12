@@ -3,7 +3,7 @@ package com.dphotoalbum.objects;
 import java.io.Serializable;
 import java.math.BigInteger;
 
-public class IPFSHashInterface implements Serializable  {
+public class IPFSHashUnpacked implements Serializable  {
 	/**
 	 * 
 	 */

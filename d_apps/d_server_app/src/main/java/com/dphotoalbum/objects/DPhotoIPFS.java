@@ -29,15 +29,23 @@ public class DPhotoIPFS implements Serializable  {
 	public void setCategory(PhotoCategoryType category) {
 		this.category = category;
 	}
-	public IPFSHashInterface getIpfsHash() {
+	public IPFSHashUnpacked getIpfsHashUnpacked() {
+		return ipfsHashUnpacked;
+	}
+	public void setIpfsHashUnpacked(IPFSHashUnpacked ipfsHashUnpacked) {
+		this.ipfsHashUnpacked = ipfsHashUnpacked;
+	}
+
+	public String getIpfsHash() {
 		return ipfsHash;
 	}
-	public void setIpfsHash(IPFSHashInterface ipfsHash) {
+	public void setIpfsHash(String ipfsHash) {
 		this.ipfsHash = ipfsHash;
 	}
 
 	private BigInteger index;
 	private String owner;
 	private PhotoCategoryType category;
-	private IPFSHashInterface ipfsHash;
+	private IPFSHashUnpacked ipfsHashUnpacked;
+	private String ipfsHash;
 }

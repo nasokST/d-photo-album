@@ -15,6 +15,7 @@ public class DPhoto extends DPhotoIPFS {
 		this.setIndex(ipfsPhoto.getIndex());
 		this.setOwner(ipfsPhoto.getOwner());
 		this.setCategory(ipfsPhoto.getCategory());
+		this.setIpfsHashUnpacked(ipfsPhoto.getIpfsHashUnpacked());
 		this.setIpfsHash(ipfsPhoto.getIpfsHash());
 	}
 
