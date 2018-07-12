@@ -70,22 +70,45 @@
 	}
 	
 	
-	function createNewFaucetTransaction() {
-		var address = $("#address").val();
+	function getCommentsForPhoto() {
+		var category = $("#category").val();
+		var photoindex = $("#photoindex").val();
+
+		console.log(category);
+		console.log(photoindex);
+
 		$.ajax({
-		  url: 'http://localhost:' + port + '/transactions/send/faucet',
-		  type: 'POST',
-		  data: address,
-		  processData: false,
-		  success: function(data) {
-			$("#alert-container").append("<div id='success-alert' class='alert alert-info alert-dismissible fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>Transaction created. Expect your ShumenCoin soon.</div>");
-		  },
-		  error: function(data) {
-			$("#alert-container").append("<div class='alert alert-danger alert-dismissible fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>Something went wrong</div>");
-		  },
-		  beforeSend: setHeader
+			url: 'http://localhost:' + port + '/dphoto/comment/' + category + '/' + photoindex,
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) { 
+				fillInComments(data.comments,"comments-table");
+			},
+			error: function(data) {
+				console.log('http://localhost:' + port + 'dphoto/comment/' + category + '/' + photoindex);
+			},
+			beforeSend: setHeader
 		});
 	}
+
+	function fillInComments(data, table) {
+
+		$('#' + table).DataTable().clear().destroy();	
+		$.each(data, function(index, element) {
+			var html = "<tr>"
+			+ "<td>" + element.autor + "</td>"
+			+ "<td>" + element.dataTime + "</td>"
+			+ "<td>" + element.text + "</td>"
+			$( "#" + table + "-body" ).append(html);
+		});	
+		$('#' + table).DataTable({
+                "fixedHeader": true,
+                "responsive": true,
+				"lengthChange": false,               
+				"searching": false,
+				"paginate": false,
+				"info": false,});
+	}		
 	
 	
 	function createNewWallet() {
@@ -220,8 +243,6 @@ $( document ).ready(function() {
 		
 	function fillInCategory(data, table) {
 
-		console.log("sadasdas");
-
 		$('#' + table).DataTable().clear().destroy();	
 		$.each(data, function(index, element) {
 			var html = "<tr>"
@@ -239,7 +260,6 @@ $( document ).ready(function() {
 				"paginate": false,
 				"info": false,});
 	}
-
 });
 
 function setHeader(xhr) {
@@ -284,8 +304,7 @@ $(".uploadImageD").on("click", function (evt) {
         <li><a data-toggle="tab" href="#sectionB">Family</a></li>
         <li><a data-toggle="tab" href="#sectionC">Sea</a></li>
         <li><a data-toggle="tab" href="#sectionD">Montain</a></li>
-        <li><a data-toggle="tab" href="#sectionE">Accounts and balances</a></li>
-        <li><a data-toggle="tab" href="#sectionF">Faucet</a></li>
+        <li><a data-toggle="tab" href="#sectionF">Read comments for photo...</a></li>
         <li><a data-toggle="tab" href="#sectionG">Wallet</a></li>
         <li><a data-toggle="tab" href="#sectionH">Sender</a></li>
         <li class='pull-right'><h4>DPhotoAlbum</h4></li>
@@ -369,28 +388,26 @@ $(".uploadImageD").on("click", function (evt) {
 				</table>
 			</div>
         </div>
-        <div id="sectionE" class="tab-pane fade">
-            <h3>Accounts and balances</h3>
+        <div id="sectionF" class="tab-pane fade">
+            <h3>Read comments for photo</h3>
 			<div class="container-fluid">
-				<table id="balances-table" class="table table-striped table-bordered">
+				<label for="category">Category:</label>
+				<input type="text" id="category"> 
+				<label for="photoindex">photoindex</label>
+				<input type="text" id="photoindex"> 
+				<button onclick="javascript:getCommentsForPhoto()" class="btn btn-default">get comments</button>
+				<div id="alert-container"></div>
+				<table id="comments-table" class="table table-striped table-bordered">
 					<thead>
 						<tr>
-							<th style="width:33%">Address</th>
-							<th style="width:33%">Confirmed balance</th>
-							<th style="width:33%">Pending balance</th>
+							<th>Autor</th>
+							<th>Time</th>
+							<th>Text</th>
 						</tr>
 					</thead>
-					<tbody id="balances-table-body">
+					<tbody id="comments-table-body">
 					</tbody>
-				</table>
-			</div>
-        </div>
-        <div id="sectionF" class="tab-pane fade">
-            <h3>Faucet</h3>
-			<div class="container-fluid">
-				<label for="address">Address of receiver (PublicKey):</label>
-				<input type="address" style="width:400px" id="address"> <button onclick="javascript:createNewFaucetTransaction()" class="btn btn-default">Submit</button>
-				<div id="alert-container"></div>
+				</table>				
 			</div>
         </div>
         <div id="sectionG" class="tab-pane fade">
