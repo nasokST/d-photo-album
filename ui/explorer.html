@@ -90,6 +90,43 @@
 			beforeSend: setHeader
 		});
 	}
+/*
+	function setCommentsForPhoto() {
+		var privateKey = $("#privateKey").val();
+		var commentText = $("#commentText").val();
+
+		console.log(privateKey);
+		console.log(commentText);
+
+{
+	"pk": "d3ab3441d5068587a1e966dedff815eb293c7240f008dee85aaa42fd0efc09ec",
+	"comments": {
+		"category": "SEA",
+		"photoIndex": 1,
+		"comments": [
+			{
+				"autor": "",
+				"dateTime": "null",
+				"text": "fdfdgdfgdfgdfgdfgdfgdf"
+			}
+		]
+	}
+}
+
+
+		$.ajax({
+			url: 'http://localhost:' + port + '/dphoto/comment',
+			type: 'POST',
+			dataType: 'json',
+			success: function(data) { 
+				fillInComments(data.comments,"comments-table");
+			},
+			error: function(data) {
+				console.log('http://localhost:' + port + 'dphoto/comment/' + category + '/' + photoindex);
+			},
+			beforeSend: setHeader
+		});
+	}	*/
 
 	function fillInComments(data, table) {
 
@@ -171,24 +208,31 @@
 
 	function uploadFile() {
 
-		console.log("sadasdas");
+		console.log("File upload");
 
-		/*var address = $("#password").val();*/
-		var fileUploadData = new FormData();
-		fileUploadData.append('file', $('input#file.findDocumentOnboarding')[0].files[0]);
+		var $fileUpload = $("#fileUpload"); //transactionData
+		var fileUpload1 = $("#fileUpload"); //transactionData
+		//password password_tr
+		// cryptodata is json json_tr
+		
+/*		var tr_data = getFormData($fileUpload); 
+
+		console.log(tr_data);*/
+		console.log($fileUpload.serialize());
 
 		$.ajax({
 		  url: 'http://localhost:' + port + '/dphoto',
-		  type: 'POST',
-		  data: fileUploadData,
-     	  contentType:'multipart/form-data',
-     	  dataType: 'json',
-		  processData: false,
+		  data: fileUpload1,
+			cache: false,
+			contentType: false,
+			processData: false,
+			method: 'POST',
+			type: 'POST', // For jQuery < 1.9
 		  success: function(data) {
-			$("#wallet-json").remove();
-			$("#json-container").append("<div class='alert alert-danger alert-dismissible fade in' id='wallet-json' style='white-space:pre-wrap; word-wrap:break-word;'>" + data + "</div>");
+			console.log("File upload: OK");
 		  },
 		  error: function(data) {
+		  	console.log("File upload: FALSE");
 			$("#json-container").append("<div class='alert alert-danger alert-dismissible fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>Something went wrong</div>");
 		  },
 		  beforeSend: setHeader
@@ -203,7 +247,153 @@ $( document ).ready(function() {
 	}
 	
 	window.setTimeout(function() { $(".alert-message").alert('close'); }, 2000);
+
+    $("#btnSubmit").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        fire_ajax_submit();
+
+    });
+
+    $("#btnSubmit1").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        fire_ajax_submit1();
+
+    });
+
+    $("#btnSubmit2").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        fire_ajax_submit2();
+
+    });        
+
+	function fire_ajax_submit() {
+
+	    // Get form
+	    var form = $('#fileUploadForm')[0];
+
+	    var data = new FormData(form);
+
+	    data.append("CustomField", "This is some extra data, testing");
+
+	    $("#btnSubmit").prop("disabled", true);
+
+	    $.ajax({
+	        type: "POST",
+	        enctype: 'multipart/form-data',
+	        url: 'http://localhost:' + port + '/dphoto',
+	        data: data,
+	        //http://api.jquery.com/jQuery.ajax/
+	        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+	        processData: false, //prevent jQuery from automatically transforming the data into a query string
+	        contentType: false,
+	        cache: false,
+	        timeout: 600000,
+	        success: function (data) {
+
+	            $("#result").text(data);
+	            console.log("SUCCESS : ", data);
+	            $("#btnSubmit").prop("disabled", false);
+
+	        },
+	        error: function (e) {
+
+	            $("#result").text(e.responseText);
+	            console.log("ERROR : ", e);
+	            $("#btnSubmit").prop("disabled", false);
+
+	        }
+	    });
+ 	}
 	
+	function fire_ajax_submit1() {
+
+	    // Get form
+	    var form = $('#fileUploadForm1')[0];
+
+	    var data = new FormData(form);
+
+	    data.append("CustomField", "This is some extra data, testing");
+
+	    $("#btnSubmit1").prop("disabled", true);
+
+	    $.ajax({
+	        type: "POST",
+	        enctype: 'multipart/form-data',
+	        url: 'http://localhost:' + port + '/dphoto',
+	        data: data,
+	        //http://api.jquery.com/jQuery.ajax/
+	        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+	        processData: false, //prevent jQuery from automatically transforming the data into a query string
+	        contentType: false,
+	        cache: false,
+	        timeout: 600000,
+	        success: function (data) {
+
+	            $("#result").text(data);
+	            console.log("SUCCESS : ", data);
+	            $("#btnSubmit1").prop("disabled", false);
+
+	        },
+	        error: function (e) {
+
+	            $("#result").text(e.responseText);
+	            console.log("ERROR : ", e);
+	            $("#btnSubmit1").prop("disabled", false);
+
+	        }
+	    });
+ 	}
+
+	function fire_ajax_submit2() {
+
+	    // Get form
+	    var form = $('#fileUploadForm2')[0];
+
+	    var data = new FormData(form);
+
+	    data.append("CustomField", "This is some extra data, testing");
+
+	    $("#btnSubmit2").prop("disabled", true);
+
+	    $.ajax({
+	        type: "POST",
+	        enctype: 'multipart/form-data',
+	        url: 'http://localhost:' + port + '/dphoto',
+	        data: data,
+	        //http://api.jquery.com/jQuery.ajax/
+	        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+	        processData: false, //prevent jQuery from automatically transforming the data into a query string
+	        contentType: false,
+	        cache: false,
+	        timeout: 600000,
+	        success: function (data) {
+
+	            $("#result").text(data);
+	            console.log("SUCCESS : ", data);
+	            $("#btnSubmit2").prop("disabled", false);
+
+	        },
+	        error: function (e) {
+
+	            $("#result").text(e.responseText);
+	            console.log("ERROR : ", e);
+	            $("#btnSubmit2").prop("disabled", false);
+
+	        }
+	    });
+ 	} 	
+
+
+
 	(function(){
 	   var f = function() {
 	   $.ajax({
@@ -306,35 +496,6 @@ function setHeader(xhr) {
 	xhr.setRequestHeader('Origin', 'http://localhost:' + port + '/');
 }
 
-$(".uploadImageD").on("click", function (evt) {
-
-	console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-
-    IdToEdit = $(this).closest('tr').siblings().find('p.important').text();
-    alert(IdToEdit);
-    var url = "http://localhost:10110/MavenProject/api123/Onboard/uploads/"+IdToEdit;
-    evt.preventDefault();
-
-    var documentData = new FormData();
-    documentData.append("file", $('input#file.findDocumentOnboarding')[0].files[0]);
-    $.ajax({
-        url: url,
-        type: 'PUT',
-        data: {'testBlob': (documentData)},
-        async: false,
-        cache: false,
-        contentType: false,
-        enctype: 'multipart/form-data',
-        processData: false,
-        success: function (response) {
-            alert(response);
-        }
-    });
-
-    return false;
-});
-
-
 </script>
 </head>
 <body>
@@ -368,22 +529,14 @@ $(".uploadImageD").on("click", function (evt) {
         </div>
         <div id="sectionB" class="tab-pane fade">
             <h3>Family</h3>
-					<form enctype="multipart/form-data" method="post" name="fileinfo"">
-						  <label>PK:</label>
-						  <input type="text" placeholder="private key" /><br />
-						  <label>category:</label>
-						  <input type="text" name="category" placeholder="FAMILY" disabled="disabled"  /><br />
-						  <input type="file" name="file"/>
-						  <input type="submit" value="Upload" class="uploadImageD" />
-						</form>            
+					<form method="POST" enctype="multipart/form-data" id="fileUploadForm">
+					    <input type="file" name="file"/>
+					    <input type="text" name="pk"/>
+					    <input type="text" name="category" value="FAMILY"/>
+					    <input type="submit" value="Submit" id="btnSubmit"/>
+					</form>					
 			<div class="container-fluid">
 				<table id="family-category-table" class="table table-striped table-bordered">
-<!-- 				    <form id="frm" method="post" enctype="multipart/form-data" target="uploadFrame" onsubmit="Upload()">
-				        <input type="file" id="file" name="dummyname" />
-				        <input type="text" id="category" placeholder="FAMILY" disabled="disabled" />
-				        <input type="text" id="pk" placeholder="private key"/>
-				        <input type="submit" value="Upload""/>
-				    </form>		 -->			
 					<thead>
 						<tr>
 							<th>Index</th>
@@ -398,6 +551,12 @@ $(".uploadImageD").on("click", function (evt) {
         </div>
         <div id="sectionC" class="tab-pane fade">
             <h3>Sea</h3>
+					<form method="POST" enctype="multipart/form-data" id="fileUploadForm1">
+					    <input type="file" name="file"/>
+					    <input type="text" name="pk"/>
+					    <input type="text" name="category" value="SEA"/>
+					    <input type="submit" value="Submit" id="btnSubmit1"/>
+					</form>	            
 			<div class="container-fluid">
 				<table id="sea-category-table" class="table table-striped table-bordered">
 					<thead>
@@ -414,6 +573,12 @@ $(".uploadImageD").on("click", function (evt) {
         </div>
         <div id="sectionD" class="tab-pane fade">
             <h3>Montain</h3>
+					<form method="POST" enctype="multipart/form-data" id="fileUploadForm2">
+					    <input type="file" name="file"/>
+					    <input type="text" name="pk"/>
+					    <input type="text" name="category" value="MONTAIN"/>
+					    <input type="submit" value="Submit" id="btnSubmit2"/>
+					</form>	            
 			<div class="container-fluid">
 				<table id="montain-category-table" class="table table-striped table-bordered">
 					<thead>
@@ -436,6 +601,13 @@ $(".uploadImageD").on("click", function (evt) {
 				<label for="photoindex">photoindex</label>
 				<input type="text" id="photoindex"> 
 				<button onclick="javascript:getCommentsForPhoto()" class="btn btn-default">get comments</button>
+
+				<label for="privateKey">PK:</label>
+				<input type="text" id="privateKey"> 
+				<label for="commentText">comment: </label>
+				<input type="text" id="commentText"> 
+				<button onclick="javascript:setCommentsForPhoto()" class="btn btn-default">get comments</button>
+
 				<div id="alert-container"></div>
 				<table id="comments-table" class="table table-striped table-bordered">
 					<thead>

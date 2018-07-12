@@ -187,8 +187,8 @@ public class PhotoAlbumService {
 
 			DPhoto photo = new DPhoto(ipfsPhoto);
 
-			//photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
-			//photo.setFileSize(photo.getFile().length);
+			// photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
+			// photo.setFileSize(photo.getFile().length);
 			photo.setIpfsHash((IPFSUtils.hashInterfaceToIPFSHash(ipfsPhoto.getIpfsHashUnpacked())).toBase58());
 
 			photos.add(photo);
@@ -218,8 +218,8 @@ public class PhotoAlbumService {
 
 			DPhoto photo = new DPhoto(ipfsPhoto);
 
-			//photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
-			//photo.setFileSize(photo.getFile().length);
+			// photo.setFile(IPFSUtils.downloadFile(ipfsPhoto.getIpfsHash()));
+			// photo.setFileSize(photo.getFile().length);
 			photo.setIpfsHash((IPFSUtils.hashInterfaceToIPFSHash(ipfsPhoto.getIpfsHashUnpacked())).toBase58());
 
 			photos.add(photo);
@@ -255,7 +255,8 @@ public class PhotoAlbumService {
 	 * @return
 	 */
 	public static DPhotoAlbumContractService getAlbumService(String privateKey) {
-		DPhotoAlbumContractService photoAlbumContractService = new DPhotoAlbumContractService(DPhotoAlbumConfig.getWeb3jProvider(), privateKey);
+		DPhotoAlbumContractService photoAlbumContractService = new DPhotoAlbumContractService(
+				DPhotoAlbumConfig.getWeb3jProvider(), privateKey);
 		photoAlbumContractService.load(DPhotoAlbumConfig.getAlbumContractAddress());
 		return photoAlbumContractService;
 	}
@@ -266,9 +267,10 @@ public class PhotoAlbumService {
 	 */
 	public static boolean deployAlbum() {
 
-		DPhotoAlbumContractService photoAlbumContractService = getAlbumService();
+		DPhotoAlbumContractService photoAlbumContractService = new DPhotoAlbumContractService(
+				DPhotoAlbumConfig.getWeb3jProvider(), DPhotoAlbumConfig.getPrivateKey());
 
-		if (!photoAlbumContractService.load(DPhotoAlbumConfig.getAlbumContractAddress())) {
+		if (DPhotoAlbumConfig.getAlbumContractAddress().isEmpty()) {
 			photoAlbumContractService.deploy();
 			System.out.println(photoAlbumContractService.getContractAddress());
 

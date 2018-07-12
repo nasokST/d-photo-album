@@ -45,7 +45,7 @@ public class DPhotoAlbumApplication {
 //		}
 
 		//PhotoAlbumService.deployAlbum();
-		//PhotoAlbumService.deployAlbumCategories();
+		PhotoAlbumService.deployAlbumCategories();
 
 		SpringApplication.run(DPhotoAlbumApplication.class, args);
 	}
