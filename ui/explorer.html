@@ -105,7 +105,33 @@
 		  beforeSend: setHeader
 		});
 	}
-	
+
+	function uploadFile() {
+
+		console.log("sadasdas");
+
+		/*var address = $("#password").val();*/
+		var fileUploadData = new FormData();
+		fileUploadData.append('file', $('input#file.findDocumentOnboarding')[0].files[0]);
+
+		$.ajax({
+		  url: 'http://localhost:' + port + '/dphoto',
+		  type: 'POST',
+		  data: fileUploadData,
+     	  contentType:'multipart/form-data',
+     	  dataType: 'json',
+		  processData: false,
+		  success: function(data) {
+			$("#wallet-json").remove();
+			$("#json-container").append("<div class='alert alert-danger alert-dismissible fade in' id='wallet-json' style='white-space:pre-wrap; word-wrap:break-word;'>" + data + "</div>");
+		  },
+		  error: function(data) {
+			$("#json-container").append("<div class='alert alert-danger alert-dismissible fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>Something went wrong</div>");
+		  },
+		  beforeSend: setHeader
+		});
+	}	
+
 $( document ).ready(function() {
 
 	var portParam = getUrlParameter('port');
@@ -136,9 +162,19 @@ $( document ).ready(function() {
 			},
 			beforeSend: setHeader
 		});
-		
+
 		$.ajax({
 			url: 'http://localhost:' + port + '/dphoto/2',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) { 
+				fillInCategory(data,"sea-category-table");
+			},
+			beforeSend: setHeader
+		});
+
+		$.ajax({
+			url: 'http://localhost:' + port + '/dphoto/3',
 			type: 'GET',
 			dataType: 'json',
 			success: function(data) { 
@@ -157,16 +193,6 @@ $( document ).ready(function() {
 		  beforeSend: setHeader
 		});
 
-		$.ajax({
-		  url: 'http://localhost:' + port + '/transactions/balances',
-		  type: 'GET',
-		  dataType: 'json',
-		  success: function(data) { 
-			fillInBalancesTable(data);
-		  },
-		  beforeSend: setHeader
-		});
-		
 	   };
 	   window.setInterval(f, 10000);
 	   f();
@@ -193,6 +219,9 @@ $( document ).ready(function() {
 	}
 		
 	function fillInCategory(data, table) {
+
+		console.log("sadasdas");
+
 		$('#' + table).DataTable().clear().destroy();	
 		$.each(data, function(index, element) {
 			var html = "<tr>"
@@ -210,49 +239,41 @@ $( document ).ready(function() {
 				"paginate": false,
 				"info": false,});
 	}
-	
-	function fillInPeersTable(data) {
-		$('#peers-table').DataTable().clear().destroy();
-		$.each(data, function(index, element) { 		
-			var html = "<tr>"
-						+ "<td>" + index +"</td>"
-						+ "<td>" + element +"</td>"
-					+ "</tr>";
-			$( "#peers-table-body" ).append(html);
-		});
-		$('#peers-table').DataTable({
-                "fixedHeader": true,
-                "responsive": true,
-				"lengthChange": false,               
-				"searching": false,
-				"paginate": false,
-				"info": false,});
-	}
-	
-	function fillInBalancesTable(data) {
-		$('#balances-table').DataTable().clear().destroy();
-		$.each(data, function(index, element) { 		
-			var html = "<tr>"
-						+ "<td style='width:33%'>" + element.address +"</td>"
-						+ "<td style='width:33%'>" + element.confirmedBalance +"</td>"
-						+ "<td style='width:33%'>" + element.pendingBalance +"</td>"
-					+ "</tr>";
-			$( "#balances-table-body" ).append(html);
-		});
-		$('#balances-table').DataTable({
-                "fixedHeader": true,
-                "responsive": true,
-				"lengthChange": false,               
-				"searching": false,
-				"paginate": false,
-				"info": false,});
-	}
-	
+
 });
 
 function setHeader(xhr) {
 	xhr.setRequestHeader('Origin', 'http://localhost:' + port + '/');
 }
+
+$(".uploadImageD").on("click", function (evt) {
+
+	console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+    IdToEdit = $(this).closest('tr').siblings().find('p.important').text();
+    alert(IdToEdit);
+    var url = "http://localhost:10110/MavenProject/api123/Onboard/uploads/"+IdToEdit;
+    evt.preventDefault();
+
+    var documentData = new FormData();
+    documentData.append("file", $('input#file.findDocumentOnboarding')[0].files[0]);
+    $.ajax({
+        url: url,
+        type: 'PUT',
+        data: {'testBlob': (documentData)},
+        async: false,
+        cache: false,
+        contentType: false,
+        enctype: 'multipart/form-data',
+        processData: false,
+        success: function (response) {
+            alert(response);
+        }
+    });
+
+    return false;
+});
+
 
 </script>
 </head>
@@ -261,8 +282,8 @@ function setHeader(xhr) {
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#sectionA">Categories</a></li>
         <li><a data-toggle="tab" href="#sectionB">Family</a></li>
-        <li><a data-toggle="tab" href="#sectionC">Montain</a></li>
-        <li><a data-toggle="tab" href="#sectionD">Sea</a></li>
+        <li><a data-toggle="tab" href="#sectionC">Sea</a></li>
+        <li><a data-toggle="tab" href="#sectionD">Montain</a></li>
         <li><a data-toggle="tab" href="#sectionE">Accounts and balances</a></li>
         <li><a data-toggle="tab" href="#sectionF">Faucet</a></li>
         <li><a data-toggle="tab" href="#sectionG">Wallet</a></li>
@@ -288,8 +309,22 @@ function setHeader(xhr) {
         </div>
         <div id="sectionB" class="tab-pane fade">
             <h3>Family</h3>
+					<form enctype="multipart/form-data" method="post" name="fileinfo"">
+						  <label>PK:</label>
+						  <input type="text" placeholder="private key" /><br />
+						  <label>category:</label>
+						  <input type="text" name="category" placeholder="FAMILY" disabled="disabled"  /><br />
+						  <input type="file" name="file"/>
+						  <input type="submit" value="Upload" class="uploadImageD" />
+						</form>            
 			<div class="container-fluid">
 				<table id="family-category-table" class="table table-striped table-bordered">
+<!-- 				    <form id="frm" method="post" enctype="multipart/form-data" target="uploadFrame" onsubmit="Upload()">
+				        <input type="file" id="file" name="dummyname" />
+				        <input type="text" id="category" placeholder="FAMILY" disabled="disabled" />
+				        <input type="text" id="pk" placeholder="private key"/>
+				        <input type="submit" value="Upload""/>
+				    </form>		 -->			
 					<thead>
 						<tr>
 							<th>Index</th>
@@ -303,6 +338,22 @@ function setHeader(xhr) {
 			</div>
         </div>
         <div id="sectionC" class="tab-pane fade">
+            <h3>Sea</h3>
+			<div class="container-fluid">
+				<table id="sea-category-table" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>Index</th>
+							<th>Photographer</th>
+							<th>Photo</th>
+						</tr>
+					</thead>
+					<tbody id="sea-category-table-body">
+					</tbody>
+				</table>
+			</div>
+        </div>
+        <div id="sectionD" class="tab-pane fade">
             <h3>Montain</h3>
 			<div class="container-fluid">
 				<table id="montain-category-table" class="table table-striped table-bordered">
@@ -314,22 +365,6 @@ function setHeader(xhr) {
 						</tr>
 					</thead>
 					<tbody id="montain-category-table-body">
-					</tbody>
-				</table>
-			</div>
-        </div>
-        <div id="sectionD" class="tab-pane fade">
-            <h3>Sea</h3>
-			<div class="container-fluid">
-				<table id="peers-table" class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>Index</th>
-							<th>Photographer</th>
-							<th>Photo</th>
-						</tr>
-					</thead>
-					<tbody id="peers-table-body">
 					</tbody>
 				</table>
 			</div>
