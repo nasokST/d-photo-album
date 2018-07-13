@@ -70,7 +70,7 @@
 	}
 	
 	
-	function getCommentsForPhoto() {
+/*	function getCommentsForPhoto() {
 		var category = $("#category").val();
 		var photoindex = $("#photoindex").val();
 
@@ -89,44 +89,7 @@
 			},
 			beforeSend: setHeader
 		});
-	}
-/*
-	function setCommentsForPhoto() {
-		var privateKey = $("#privateKey").val();
-		var commentText = $("#commentText").val();
-
-		console.log(privateKey);
-		console.log(commentText);
-
-{
-	"pk": "d3ab3441d5068587a1e966dedff815eb293c7240f008dee85aaa42fd0efc09ec",
-	"comments": {
-		"category": "SEA",
-		"photoIndex": 1,
-		"comments": [
-			{
-				"autor": "",
-				"dateTime": "null",
-				"text": "fdfdgdfgdfgdfgdfgdfgdf"
-			}
-		]
-	}
-}
-
-
-		$.ajax({
-			url: 'http://localhost:' + port + '/dphoto/comment',
-			type: 'POST',
-			dataType: 'json',
-			success: function(data) { 
-				fillInComments(data.comments,"comments-table");
-			},
-			error: function(data) {
-				console.log('http://localhost:' + port + 'dphoto/comment/' + category + '/' + photoindex);
-			},
-			beforeSend: setHeader
-		});
-	}	*/
+	}*/
 
 	function fillInComments(data, table) {
 
@@ -253,8 +216,8 @@ $( document ).ready(function() {
         //stop submit the form, we will post it manually.
         event.preventDefault();
 
-        fire_ajax_submit();
-
+        //fire_ajax_submit();
+        submitPhoto('fileUploadForm', 'btnSubmit');
     });
 
     $("#btnSubmit1").click(function (event) {
@@ -262,8 +225,8 @@ $( document ).ready(function() {
         //stop submit the form, we will post it manually.
         event.preventDefault();
 
-        fire_ajax_submit1();
-
+        //fire_ajax_submit1();
+        submitPhoto('fileUploadForm1', 'btnSubmit1');
     });
 
     $("#btnSubmit2").click(function (event) {
@@ -271,11 +234,199 @@ $( document ).ready(function() {
         //stop submit the form, we will post it manually.
         event.preventDefault();
 
-        fire_ajax_submit2();
+        //fire_ajax_submit2();
+        submitPhoto('fileUploadForm2', 'btnSubmit2');
+    });
 
-    });        
+    $("#btnGetComments").click(function (event) {
 
-	function fire_ajax_submit() {
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        //fire_ajax_submit2();
+        getCommentsForPhoto();
+    });
+
+    $("#btnAddComments").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        //fire_ajax_submit2();
+        addCommentForPhoto()();
+    });
+ 
+
+/*    					<form method="POST" enctype="application/java" id="addReadComment">
+		 				<label for="category">Category:</label>
+						<input type="text" id="category"> 
+						<label for="photoindex">photoindex</label>
+						<input type="text" id="photoindex"> 
+					    <input type="submit" value="Submit" id="btnGetComments"/>*/
+
+	function getCommentsForPhoto() {
+		var category = $("#category").val();
+		var photoindex = $("#photoindex").val();
+
+		console.log(category);
+		console.log(photoindex);
+
+		$.ajax({
+			url: 'http://localhost:' + port + '/dphoto/comment/' + category + '/' + photoindex,
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) { 
+				fillInComments(data.comments,"comments-table");
+			},
+			error: function(data) {
+				console.log('http://localhost:' + port + '/dphoto/comment/' + category + '/' + photoindex);
+			},
+			beforeSend: setHeader
+		});
+	}
+
+	function addCommentForPhoto() {
+		var category = $("#category").val();
+		var photoindex = $("#photoindex").val();		
+		var privateKey = $("#privateKey").val();
+		var commentText = $("#commentText").val();
+
+		console.log(category);
+		console.log(photoindex);
+		console.log(privateKey);
+		console.log(commentText);
+
+		var comment11 = {};
+		comment11.pk = privateKey;
+		comment11.comments = {};
+		comment11.comments.category = category;
+		comment11.comments.photoIndex = photoindex;
+		comment11.comments.comments = [];
+		comment11.comments.comments[0] = {};
+		comment11.comments.comments[0].autor = "";
+		comment11.comments.comments[0].dateTime = "";
+		comment11.comments.comments[0].text = commentText;
+
+		console.log(comment11);
+		console.log('http://localhost:' + port + '/dphoto/comment');
+
+
+		$.ajax({
+		  url: 'http://localhost:' + port + '/dphoto/comment',
+		  type: 'POST',
+          dataType: 'json',
+		  contentType: "application/json; charset=utf-8",
+		  data: comment11,
+		  success: function(data) {
+		  },
+		  error: function(data) {
+		  },
+			beforeSend: setHeader
+		});
+
+
+/*	    $.ajax({
+	        type: "POST",
+	        //enctype: 'multipart/form-data',
+	        url: 'http://localhost:' + port + '/dphoto/comment',
+	        data: JSON.stringify(comment),
+	        //http://api.jquery.com/jQuery.ajax/
+	        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+	        processData: false, //prevent jQuery from automatically transforming the data into a query string
+	        contentType: false,
+	        cache: false,
+	        timeout: 600000,
+	        success: function (data) {
+
+	        },
+	        error: function (e) {
+
+	        }
+	    });		*/
+
+/*		$.ajax({
+			url: 'http://localhost:' + port + '/dphoto/comment',
+			dataType: "json",
+			contentType:'application/json',
+			type: 'POST',			
+			data: JSON.stringify(comment),
+			success: function(data) { 
+				console.log("OK");
+			},
+			error: function(data) {
+				console.log("NOK");
+			},
+			beforeSend: setHeader			
+		});	*/	
+
+/*		$.ajax({
+		  url: 'http://localhost:' + port + '/dphoto/comment',
+		  type: 'POST',
+          dataType: 'json',
+          method: 'POST',
+		  contentType: "application/json; charset=utf-8",
+		  data: JSON.stringify(comment),
+		  success: function(data) {
+		  	console.log("OK");
+		  },
+		  error: function(data) {
+		  	console.log("NOK");
+		  },
+		  beforeSend: setHeader
+		});		*/
+
+		  
+		  
+/*		$.ajax({
+		  url: 'http://localhost:' + port + '/dphoto/comment',
+          dataType: 'json',
+		  type: 'POST',
+		  data: JSON.stringify(comment),
+		  processData: false,
+		  success: function(data) {
+			console.log("OK");
+		  },
+		  error: function(data) {
+			console.log("NOK");
+		  },
+		  beforeSend: setHeader
+		});
+*/
+
+
+/*
+		$.ajax({
+		  url: 'http://localhost:' + port + '/dphoto/comment',
+		  method: 'POST',
+		  type: 'POST',
+          dataType: 'json',
+		  contentType: "application/json; charset=utf-8",
+		  data: JSON.stringify(comment),
+		  success: function(data) {
+			console.log("OK");
+		  },
+		  error: function(data) {
+			console.log("NOK");
+		  },
+		  beforeSend: setHeader
+		});	*/	
+
+
+/*		$.ajax({
+			url: 'http://localhost:' + port + '/dphoto/comment',
+			type: 'POST',
+			dataType: 'json',
+			success: function(data) { 
+				fillInComments(data.comments,"comments-table");
+			},
+			error: function(data) {
+				console.log('http://localhost:' + port + 'dphoto/comment/' + category + '/' + photoindex);
+			},
+			beforeSend: setHeader
+		});*/
+	}		
+
+/*	function fire_ajax_submit() {
 
 	    // Get form
 	    var form = $('#fileUploadForm')[0];
@@ -390,7 +541,48 @@ $( document ).ready(function() {
 
 	        }
 	    });
- 	} 	
+ 	}*/
+
+
+	function submitPhoto(photo_form, btn_sumbit) {
+
+	    // Get form
+	    var form = $('#' + photo_form)[0];
+
+	    var data = new FormData(form);
+
+	    //data.append("CustomField", "This is some extra data, testing");
+
+	    $("#" + btn_sumbit).prop("disabled", true);
+
+	    $.ajax({
+	        type: "POST",
+	        enctype: 'multipart/form-data',
+	        url: 'http://localhost:' + port + '/dphoto',
+	        data: data,
+	        //http://api.jquery.com/jQuery.ajax/
+	        //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+	        processData: false, //prevent jQuery from automatically transforming the data into a query string
+	        contentType: false,
+	        cache: false,
+	        timeout: 600000,
+	        success: function (data) {
+
+	            $("#result").text(data);
+	            console.log("SUCCESS : ", data);
+	            $("#" + btn_sumbit).prop("disabled", false);
+
+	        },
+	        error: function (e) {
+
+	            $("#result").text(e.responseText);
+	            console.log("ERROR : ", e);
+	            $("#" + btn_sumbit).prop("disabled", false);
+	        }
+	    });
+ 	}
+
+
 
 
 
@@ -596,17 +788,32 @@ function setHeader(xhr) {
         <div id="sectionF" class="tab-pane fade">
             <h3>Read comments for photo</h3>
 			<div class="container-fluid">
-				<label for="category">Category:</label>
+<!-- 				<label for="category">Category:</label>
 				<input type="text" id="category"> 
 				<label for="photoindex">photoindex</label>
 				<input type="text" id="photoindex"> 
 				<button onclick="javascript:getCommentsForPhoto()" class="btn btn-default">get comments</button>
-
+				</br>
 				<label for="privateKey">PK:</label>
 				<input type="text" id="privateKey"> 
 				<label for="commentText">comment: </label>
-				<input type="text" id="commentText"> 
-				<button onclick="javascript:setCommentsForPhoto()" class="btn btn-default">get comments</button>
+				<input type="text-area" id="commentText" style="width:500px"> 
+				<button onclick="javascript:setCommentsForPhoto()" class="btn btn-default">send comments</button> -->
+
+
+					<form method="POST" enctype="application/java" id="addReadComment">
+		 				<label for="category">Category:</label>
+						<input type="text" id="category"> 
+						<label for="photoindex">photoindex</label>
+						<input type="text" id="photoindex"> 
+					    <input type="submit" value="get comments" id="btnGetComments"/>
+						</br>
+						<label for="privateKey">private key:</label>
+						<input type="text" id="privateKey"> 
+						<label for="commentText">comment: </label>
+						<input type="text-area" id="commentText" style="width:500px">
+						<input type="submit" value="add comment" id="btnAddComments"/>
+					</form>	  				
 
 				<div id="alert-container"></div>
 				<table id="comments-table" class="table table-striped table-bordered">

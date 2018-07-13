@@ -143,7 +143,7 @@ public class DPhotoAlbumRestController {
 	 * @param photoComments
 	 * @return
 	 */
-	@PostMapping("/dphoto/comment")
+	@PostMapping(value = "/dphoto/comment", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> setPhotoComment(@RequestBody DPhotoCommentsInput photoComments) {
 		if(!photoAlbumService.addComments(photoComments)) {
 			new ResponseEntity<Object>("ERROR uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
