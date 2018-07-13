@@ -41,9 +41,9 @@ public class PhotoCategory implements Serializable  {
 			this.name = "Sea";
 			this.icon_url = "sea.png";
 			break;
-		case MONTAIN:
-			this.name = "Montain";
-			this.icon_url = "montain.png";
+		case MOUNTAIN:
+			this.name = "Mountain";
+			this.icon_url = "mountain.png";
 			break;
 		default:
 			return false;

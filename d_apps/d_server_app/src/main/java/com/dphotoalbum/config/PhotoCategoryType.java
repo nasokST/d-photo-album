@@ -7,7 +7,7 @@ public enum PhotoCategoryType {
 	UNKNOWN(0),
 	FAMILY(1),
 	SEA(2),
-	MONTAIN(3);
+	MOUNTAIN(3);
 
 	private int value;
 

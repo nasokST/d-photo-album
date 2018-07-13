@@ -390,7 +390,7 @@ $( document ).ready(function() {
 			type: 'GET',
 			dataType: 'json',
 			success: function(data) { 
-				fillInCategory(data,"montain-category-table");
+				fillInCategory(data,"mountain-category-table");
 			},
 			beforeSend: setHeader
 		});
@@ -463,7 +463,7 @@ function setHeader(xhr) {
         <li class="active"><a data-toggle="tab" href="#sectionA">Categories</a></li>
         <li><a data-toggle="tab" href="#sectionB">Family</a></li>
         <li><a data-toggle="tab" href="#sectionC">Sea</a></li>
-        <li><a data-toggle="tab" href="#sectionD">Montain</a></li>
+        <li><a data-toggle="tab" href="#sectionD">Mountain</a></li>
         <li><a data-toggle="tab" href="#sectionF">Read comments for photo...</a></li>
         <li><a data-toggle="tab" href="#sectionG">Get photos for photographer</a></li>
         <li class='pull-right'><h4>DPhotoAlbum</h4></li>
@@ -538,7 +538,7 @@ function setHeader(xhr) {
 					    <input type="submit" value="Submit" id="btnSubmit2"/>
 					</form>	            
 			<div class="container-fluid">
-				<table id="montain-category-table" class="table table-striped table-bordered">
+				<table id="mountain-category-table" class="table table-striped table-bordered">
 					<thead>
 						<tr>
 							<th>Index</th>
@@ -546,7 +546,7 @@ function setHeader(xhr) {
 							<th>Photo</th>
 						</tr>
 					</thead>
-					<tbody id="montain-category-table-body">
+					<tbody id="mountain-category-table-body">
 					</tbody>
 				</table>
 			</div>

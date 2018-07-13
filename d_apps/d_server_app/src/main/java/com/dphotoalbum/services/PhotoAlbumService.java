@@ -302,8 +302,8 @@ public class PhotoAlbumService {
 				}
 			}
 
-			if (!isCategoriExists(PhotoCategoryType.MONTAIN, categories)) {
-				String categoryAddress = deployPhotoCategory(PhotoCategoryType.MONTAIN);
+			if (!isCategoriExists(PhotoCategoryType.MOUNTAIN, categories)) {
+				String categoryAddress = deployPhotoCategory(PhotoCategoryType.MOUNTAIN);
 				if (!categoryAddress.isEmpty()) {
 					photoAlbumContractService.addPhotoCategory(categoryAddress);
 				}

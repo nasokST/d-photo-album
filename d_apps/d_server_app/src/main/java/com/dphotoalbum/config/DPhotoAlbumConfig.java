@@ -22,7 +22,7 @@ public class DPhotoAlbumConfig {
 		switch(categoryType) {
 		case FAMILY:
 			return categoryFamilyContractAddress;
-		case MONTAIN:
+		case MOUNTAIN:
 			return categoryMountainContractAddress;
 		case SEA:
 			return categorySеаContractAddress;
@@ -35,7 +35,7 @@ public class DPhotoAlbumConfig {
 		switch(categoryType) {
 		case FAMILY:
 			categoryFamilyContractAddress = address;
-		case MONTAIN:
+		case MOUNTAIN:
 			categoryMountainContractAddress = address;
 		case SEA:
 			categorySеаContractAddress = address;
